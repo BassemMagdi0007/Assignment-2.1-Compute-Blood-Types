@@ -41,12 +41,13 @@ cpd_bloodtype_ab = [[0.5], [0.5], [0.0]]
 filename = "../../example-problems/problem-a-00.json"
 data = load_json(filename)
 if data:
-    extracted_data = extract_data(data)
-    family_tree = extracted_data["family_tree"]
-    test_results = extracted_data["test_results"]
-    queries = extracted_data["queries"]
-    country = extracted_data["country"]
+    extracted_data = extract_data(data) #dict
+    family_tree = extracted_data["family_tree"] #list
+    test_results = extracted_data["test_results"] #list
+    queries = extracted_data["queries"] #list
+    country = extracted_data["country"] #str
 
+# TODO: Should we ignore the mother entirely in case of father blood type requested? 
 # Dynamically define the family members (father, mother, offspring)
 family_members = {"father": None, "mother": None, "offspring": []}
 
@@ -56,6 +57,7 @@ for relation in family_tree:
     object_ = relation["object"]
     
     if relation["relation"] == "father-of":
+        # FIXME: is it right to igmnore father from offspring list?
         # Ensure no redundancy; ignore if the subject is already assigned as mother or offspring
         if family_members["father"] is None and subject not in family_members["offspring"]:
             family_members["father"] = subject
@@ -69,10 +71,28 @@ for relation in family_tree:
         if object_ not in family_members["offspring"]:
             family_members["offspring"].append(object_)
 
+# Find the blood type for the father
+father_bloodtype = None
+for result in test_results:
+    # Compare the name of the person in father 
+    if result.get("person") == family_members["father"]:
+        father_bloodtype = result.get("result")
+        break
+
+# Find the blood type for the mother
+mother_bloodtype = None
+for result in test_results:
+    if result.get("person") == family_members["mother"]:
+        mother_bloodtype = result.get("result")
+        break
+
 # Print the family structure for debugging
-print(f"Father: {family_members['father']}")
-print(f"Mother: {family_members['mother']}")
-print(f"Offspring: {family_members['offspring']}")
+father_info = f"{family_members['father']} ({father_bloodtype if father_bloodtype else 'Unknown'})"
+mother_info = f"{family_members['mother']} ({mother_bloodtype if mother_bloodtype else 'Unknown'})"
+offspring_info = [f"{child} (Unknown)" for child in family_members["offspring"]]
+print(f"Father: {father_info}")
+print(f"Mother: {mother_info}")
+print(f"Offspring: {offspring_info}")
 
 # Define the Bayesian Network structure
 complete_model = BayesianNetwork(
@@ -93,23 +113,20 @@ complete_model = BayesianNetwork(
     ]
 )
 
-# Find the blood type for the father
-father_bloodtype = None
-for result in test_results:
-    if result.get("subject") == family_members["father"]:
-        father_bloodtype = result.get("bloodtype")
-        break
-
-# Assign CPDs for father based on country and blood type
+# if father bloodtype known assign its cpd value directly to offspring allele
+# TODO: cpd values for father_allele1 and father_allele2 and father_genotype must be assigned? 
+# Can they be ignored? 
+# Can I store them in a place and ignore it? 
+# Better: make the network dynamic to not include father_allele1 and father_allele2 and father_genotype in case of known bloodtype!
 if father_bloodtype:
     if father_bloodtype == "A":
-        cpd_genotype_father = TabularCPD(variable="father_Genotype", variable_card=4, values=cpd_bloodtype_a)
+        cpd_allele1_offspring = TabularCPD(variable="Offspring_Allele1", variable_card=3, values=cpd_bloodtype_a)
     elif father_bloodtype == "B":
-        cpd_genotype_father = TabularCPD(variable="father_Genotype", variable_card=4, values=cpd_bloodtype_b)
+        cpd_allele1_offspring = TabularCPD(variable="Offspring_Allele1", variable_card=3, values=cpd_bloodtype_b)
     elif father_bloodtype == "O":
-        cpd_genotype_father = TabularCPD(variable="father_Genotype", variable_card=4, values=cpd_bloodtype_o)
+        cpd_allele1_offspring = TabularCPD(variable="Offspring_Allele1", variable_card=3, values=cpd_bloodtype_o)
     elif father_bloodtype == "AB":
-        cpd_genotype_father = TabularCPD(variable="father_Genotype", variable_card=4, values=cpd_bloodtype_ab)
+        cpd_allele1_offspring = TabularCPD(variable="Offspring_Allele1", variable_card=3, values=cpd_bloodtype_ab)
 else:
     if country == "North Wamponia":
         cpd_allele1_father = TabularCPD(variable="father_Allele1", variable_card=3, values=cpd_north_wamponia)
@@ -128,7 +145,7 @@ else:
         evidence=["father_Allele1", "father_Allele2"],
         evidence_card=[3, 3],
         values=[
-            # AA,  AB,  AO,  BA,  BB,  BO,  OA,  OB,  OO
+            # AA, AB, AO, BA, BB, BO, OA, OB, OO
             [1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0],  # A
             [0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0],  # B
             [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0],  # O
@@ -136,23 +153,16 @@ else:
         ],
     )
 
-# Find the blood type for the mother
-mother_bloodtype = None
-for result in test_results:
-    if result.get("subject") == family_members["mother"]:
-        mother_bloodtype = result.get("bloodtype")
-        break
-
 # Assign CPDs for mother based on country and blood type
 if mother_bloodtype:
     if mother_bloodtype == "A":
-        cpd_genotype_mother = TabularCPD(variable="mother_Genotype", variable_card=4, values=cpd_bloodtype_a)
+        cpd_allele2_offspring = TabularCPD(variable="Offspring_Allele2", variable_card=3, values=cpd_bloodtype_a)
     elif mother_bloodtype == "B":
-        cpd_genotype_mother = TabularCPD(variable="mother_Genotype", variable_card=4, values=cpd_bloodtype_b)
+        cpd_allele2_offspring = TabularCPD(variable="Offspring_Allele2", variable_card=3, values=cpd_bloodtype_b)
     elif mother_bloodtype == "O":
-        cpd_genotype_mother = TabularCPD(variable="mother_Genotype", variable_card=4, values=cpd_bloodtype_o)
+        cpd_allele2_offspring = TabularCPD(variable="Offspring_Allele2", variable_card=3, values=cpd_bloodtype_o)
     elif mother_bloodtype == "AB":
-        cpd_genotype_mother = TabularCPD(variable="mother_Genotype", variable_card=4, values=cpd_bloodtype_ab)
+        cpd_allele2_offspring = TabularCPD(variable="Offspring_Allele2", variable_card=3, values=cpd_bloodtype_ab)
 else:
     if country == "North Wamponia":
         cpd_allele1_mother = TabularCPD(variable="mother_Allele1", variable_card=3, values=cpd_north_wamponia)
@@ -180,31 +190,33 @@ else:
     )
 
 # Define CPDs for Offspring
-cpd_allele1_offspring = TabularCPD(
-    variable="Offspring_Allele1",
-    variable_card=3,
-    values=[
-        # A ,  B ,  O ,  AB
-        [1.0, 0.0, 0.0, 0.5],  # A
-        [0.0, 1.0, 0.0, 0.5],  # B
-        [0.0, 0.0, 1.0, 0.0],  # O
-    ],
-    evidence=["father_Genotype"],
-    evidence_card=[4],
-)
+if not father_bloodtype:
+    cpd_allele1_offspring = TabularCPD(
+        variable="Offspring_Allele1",
+        variable_card=3,
+        values=[
+            # A ,  B ,  O ,  AB
+            [1.0, 0.0, 0.0, 0.5],  # A
+            [0.0, 1.0, 0.0, 0.5],  # B
+            [0.0, 0.0, 1.0, 0.0],  # O
+        ],
+        evidence=["father_Genotype"],
+        evidence_card=[4],
+    )
 
-cpd_allele2_offspring = TabularCPD(
-    variable="Offspring_Allele2",
-    variable_card=3,
-    values=[
-        # A ,  B ,  O ,  AB
-        [1.0, 0.0, 0.0, 0.5],  # A
-        [0.0, 1.0, 0.0, 0.5],  # B
-        [0.0, 0.0, 1.0, 0.0],  # O
-    ],
-    evidence=["mother_Genotype"],
-    evidence_card=[4],
-)
+if not mother_bloodtype:
+    cpd_allele2_offspring = TabularCPD(
+        variable="Offspring_Allele2",
+        variable_card=3,
+        values=[
+            # A ,  B ,  O ,  AB
+            [1.0, 0.0, 0.0, 0.5],  # A
+            [0.0, 1.0, 0.0, 0.5],  # B
+            [0.0, 0.0, 1.0, 0.0],  # O
+        ],
+        evidence=["mother_Genotype"],
+        evidence_card=[4],
+    )
 
 cpd_genotype_offspring = TabularCPD(
     variable="Offspring_Genotype",
@@ -221,17 +233,11 @@ cpd_genotype_offspring = TabularCPD(
 )
 
 # Add all CPDs to the unified model
-complete_model.add_cpds(
-    cpd_allele1_father,
-    cpd_allele2_father,
-    cpd_genotype_father,
-    cpd_allele1_mother,
-    cpd_allele2_mother,
-    cpd_genotype_mother,
-    cpd_allele1_offspring,
-    cpd_allele2_offspring,
-    cpd_genotype_offspring,
-)
+if not father_bloodtype:
+    complete_model.add_cpds(cpd_allele1_father, cpd_allele2_father, cpd_genotype_father)
+if not mother_bloodtype:
+    complete_model.add_cpds(cpd_allele1_mother, cpd_allele2_mother, cpd_genotype_mother)
+complete_model.add_cpds(cpd_allele1_offspring, cpd_allele2_offspring, cpd_genotype_offspring)
 
 # Validate the combined model
 assert complete_model.check_model(), "The combined Bayesian Network is invalid!"
