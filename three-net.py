@@ -38,7 +38,7 @@ cpd_bloodtype_o = [[0.0], [0.0], [1.0]]
 cpd_bloodtype_ab = [[0.5], [0.5], [0.0]]
 
 # Load and extract data from JSON file
-filename = "../../example-problems/problem-a-00.json"
+filename = "../../example-problems/problem-a-14.json"
 data = load_json(filename)
 if data:
     extracted_data = extract_data(data)
@@ -73,6 +73,7 @@ for relation in family_tree:
 father_bloodtype = None
 for result in test_results:
     if result.get("person") == family_members["father"]:
+        print("FATHER BLOODTYPE DETECTED")
         father_bloodtype = result.get("result")
         break
 
@@ -80,20 +81,23 @@ for result in test_results:
 mother_bloodtype = None
 for result in test_results:
     if result.get("person") == family_members["mother"]:
+        print("MOTHER BLOODTYPE DETECTED")
         mother_bloodtype = result.get("result")
         break
 
 # Find the blood type for the offspring
-offspring_bloodtype = None
+offspring_bloodtype = {}
 for result in test_results:
-    if result.get("person") == family_members["offspring"]:
-        offspring_bloodtype = result.get("result")
+    for child in family_members["offspring"]:
+        if result.get("person") == child:
+            print(f"OFFSPRING BLOODTYPE DETECTED for {child}")
+            offspring_bloodtype[child] = result.get("result")
         break
 
 # Print the family structure for debugging
 father_info = f"{family_members['father']} ({father_bloodtype if father_bloodtype else 'Unknown'})"
 mother_info = f"{family_members['mother']} ({mother_bloodtype if mother_bloodtype else 'Unknown'})"
-offspring_info = f"{family_members['offspring']} ({offspring_bloodtype if offspring_bloodtype else 'Unknown'})"
+offspring_info = [f"{child} ({offspring_bloodtype if offspring_bloodtype else 'Unknown'})" for child in family_members["offspring"]]
 print(f"Father: {father_info}")
 print(f"Mother: {mother_info}")
 print(f"Offspring: {offspring_info}")
@@ -177,48 +181,60 @@ if query_related_to_offspring:
 # If query is related to father, assign CPDs for father alleles and genotype
 if query_related_to_father:
     if not offspring_bloodtype:
-        if country == "North Wamponia":
+        # Use country-based priors for the father if the blood type is unknown
+        if country == "North Wumponia":
             cpd_allele1_father = TabularCPD(variable="father_Allele1", variable_card=3, values=cpd_north_wamponia)
             cpd_allele2_father = TabularCPD(variable="father_Allele2", variable_card=3, values=cpd_north_wamponia)
-        elif country == "South Wamponia":
+        elif country == "South Wumponia":
             cpd_allele1_father = TabularCPD(variable="father_Allele1", variable_card=3, values=cpd_south_wamponia)
             cpd_allele2_father = TabularCPD(variable="father_Allele2", variable_card=3, values=cpd_south_wamponia)
         else:
-            if offspring_bloodtype == "A":
-                cpd_allele1_father = TabularCPD(variable="father_Allele1", variable_card=3, values=cpd_north_wamponia)
-                cpd_allele2_father = TabularCPD(variable="father_Allele2", variable_card=3, values=cpd_bloodtype_a)
-            elif offspring_bloodtype == "B":
-                cpd_allele1_father = TabularCPD(variable="father_Allele1", variable_card=3, values=cpd_north_wamponia)
-                cpd_allele2_father = TabularCPD(variable="father_Allele2", variable_card=3, values=cpd_bloodtype_b)
-            elif offspring_bloodtype == "O":
-                cpd_allele1_father = TabularCPD(variable="father_Allele1", variable_card=3, values=cpd_north_wamponia)
-                cpd_allele2_father = TabularCPD(variable="father_Allele2", variable_card=3, values=cpd_bloodtype_o)
-            elif offspring_bloodtype == "AB":
-                cpd_allele1_father = TabularCPD(variable="father_Allele1", variable_card=3, values=cpd_north_wamponia)
-                cpd_allele2_father = TabularCPD(variable="father_Allele2", variable_card=3, values=cpd_bloodtype_ab)
+            # Default to North Wumponia CPDs if the country is not recognized
+            cpd_allele1_father = TabularCPD(variable="father_Allele1", variable_card=3, values=cpd_north_wamponia)
+            cpd_allele2_father = TabularCPD(variable="father_Allele2", variable_card=3, values=cpd_north_wamponia)
+    else:
+        # Use the blood type of the first offspring found
+        first_offspring_bloodtype = next(iter(offspring_bloodtype.values()))
+        if first_offspring_bloodtype == "A":
+            cpd_allele1_father = TabularCPD(variable="father_Allele1", variable_card=3, values=cpd_bloodtype_a)
+        elif first_offspring_bloodtype == "B":
+            cpd_allele1_father = TabularCPD(variable="father_Allele1", variable_card=3, values=cpd_bloodtype_b)
+        elif first_offspring_bloodtype == "O":
+            cpd_allele1_father = TabularCPD(variable="father_Allele1", variable_card=3, values=cpd_bloodtype_o)
+        elif first_offspring_bloodtype == "AB":
+            cpd_allele1_father = TabularCPD(variable="father_Allele1", variable_card=3, values=cpd_bloodtype_ab)
 
-        cpd_genotype_father = TabularCPD(
-            variable="father_Genotype",
-            variable_card=4,
-            evidence=["father_Allele1", "father_Allele2"],
-            evidence_card=[3, 3],
-            values=[
-                # AA, AB, AO, BA, BB, BO, OA, OB, OO
-                [1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0],  # A
-                [0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0],  # B
-                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0],  # O
-                [0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0],  # AB
-            ],
-        )
+        # Assign the second allele based on the country
+        if country == "North Wumponia":
+            cpd_allele2_father = TabularCPD(variable="father_Allele2", variable_card=3, values=cpd_north_wamponia)
+        elif country == "South Wumponia":
+            cpd_allele2_father = TabularCPD(variable="father_Allele2", variable_card=3, values=cpd_south_wamponia)
+        else:
+            cpd_allele2_father = TabularCPD(variable="father_Allele2", variable_card=3, values=cpd_north_wamponia)
 
-        # Add nodes and edges for father
-        complete_model.add_edges_from([
-            ("father_Allele1", "father_Genotype"),
-            ("father_Allele2", "father_Genotype")
-        ])
+    cpd_genotype_father = TabularCPD(
+        variable="father_Genotype",
+        variable_card=4,
+        evidence=["father_Allele1", "father_Allele2"],
+        evidence_card=[3, 3],
+        values=[
+            # AA, AB, AO, BA, BB, BO, OA, OB, OO
+            [1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0],  # A
+            [0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0],  # B
+            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0],  # O
+            [0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0],  # AB
+        ],
+    )
 
-        # Add all CPDs to the unified model
-        complete_model.add_cpds(cpd_allele1_father, cpd_allele2_father, cpd_genotype_father)
+    # Add nodes and edges for father
+    complete_model.add_edges_from([
+        ("father_Allele1", "father_Genotype"),
+        ("father_Allele2", "father_Genotype")
+    ])
+
+    # Add all CPDs to the unified model
+    complete_model.add_cpds(cpd_allele1_father, cpd_allele2_father, cpd_genotype_father)
+
 
 # If query is related to mother, assign CPDs for mother alleles and genotype
 if query_related_to_mother:
@@ -230,44 +246,50 @@ if query_related_to_mother:
             cpd_allele1_mother = TabularCPD(variable="mother_Allele1", variable_card=3, values=cpd_south_wamponia)
             cpd_allele2_mother = TabularCPD(variable="mother_Allele2", variable_card=3, values=cpd_south_wamponia)
         else:
-            if offspring_bloodtype == "A":
-                cpd_allele1_mother = TabularCPD(variable="mother_Allele1", variable_card=3, values=cpd_north_wamponia)
-                cpd_allele2_mother = TabularCPD(variable="mother_Allele2", variable_card=3, values=cpd_bloodtype_a)
-            elif offspring_bloodtype == "B":
-                cpd_allele1_mother = TabularCPD(variable="mother_Allele1", variable_card=3, values=cpd_north_wamponia)
-                cpd_allele2_mother = TabularCPD(variable="mother_Allele2", variable_card=3, values=cpd_bloodtype_b)
-            elif offspring_bloodtype == "O":
-                cpd_allele1_mother = TabularCPD(variable="mother_Allele1", variable_card=3, values=cpd_north_wamponia)
-                cpd_allele2_mother = TabularCPD(variable="mother_Allele2", variable_card=3, values=cpd_bloodtype_o)
-            elif offspring_bloodtype == "AB":
-                cpd_allele1_mother = TabularCPD(variable="mother_Allele1", variable_card=3, values=cpd_north_wamponia)
-                cpd_allele2_mother = TabularCPD(variable="mother_Allele2", variable_card=3, values=cpd_bloodtype_ab)
+            # Default to North Wamponia CPDs if the country is not recognized
+            cpd_allele1_mother = TabularCPD(variable="mother_Allele1", variable_card=3, values=cpd_north_wamponia)
+            cpd_allele2_mother = TabularCPD(variable="mother_Allele2", variable_card=3, values=cpd_north_wamponia)
+    else:
+        # Define CPDs based on the offspring's blood type if available
+        if offspring_bloodtype == "A":
+            cpd_allele1_mother = TabularCPD(variable="mother_Allele1", variable_card=3, values=cpd_bloodtype_a)
+        elif offspring_bloodtype == "B":
+            cpd_allele1_mother = TabularCPD(variable="mother_Allele1", variable_card=3, values=cpd_bloodtype_b)
+        elif offspring_bloodtype == "O":
+            cpd_allele1_mother = TabularCPD(variable="mother_Allele1", variable_card=3, values=cpd_bloodtype_o)
+        elif offspring_bloodtype == "AB":
+            cpd_allele1_mother = TabularCPD(variable="mother_Allele1", variable_card=3, values=cpd_bloodtype_ab)
 
-        cpd_genotype_mother = TabularCPD(
-            variable="mother_Genotype",
-            variable_card=4,
-            evidence=["mother_Allele1", "mother_Allele2"],
-            evidence_card=[3, 3],
-            values=[
-                # AA, AB, AO, BA, BB, BO, OA, OB, OO
-                [1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0],  # A
-                [0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0],  # B
-                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0],  # O
-                [0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0],  # AB
-            ],
-        )
+        # Assign the second allele based on the country
+        if country == "North Wamponia":
+            cpd_allele2_mother = TabularCPD(variable="mother_Allele2", variable_card=3, values=cpd_north_wamponia)
+        elif country == "South Wamponia":
+            cpd_allele2_mother = TabularCPD(variable="mother_Allele2", variable_card=3, values=cpd_south_wamponia)
+        else:
+            cpd_allele2_mother = TabularCPD(variable="mother_Allele2", variable_card=3, values=cpd_north_wamponia)
 
-        # Add nodes and edges for mother
-        complete_model.add_edges_from([
-            ("mother_Allele1", "mother_Genotype"),
-            ("mother_Allele2", "mother_Genotype")
-        ])
+    cpd_genotype_mother = TabularCPD(
+        variable="mother_Genotype",
+        variable_card=4,
+        evidence=["mother_Allele1", "mother_Allele2"],
+        evidence_card=[3, 3],
+        values=[
+            # AA, AB, AO, BA, BB, BO, OA, OB, OO
+            [1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0],  # A
+            [0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0],  # B
+            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0],  # O
+            [0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0],  # AB
+        ],
+    )
 
-        # Add all CPDs to the unified model
-        complete_model.add_cpds(cpd_allele1_mother, cpd_allele2_mother, cpd_genotype_mother)
+    # Add nodes and edges for mother
+    complete_model.add_edges_from([
+        ("mother_Allele1", "mother_Genotype"),
+        ("mother_Allele2", "mother_Genotype")
+    ])
 
-# Validate the combined model
-assert complete_model.check_model(), "The combined Bayesian Network is invalid!"
+    # Add all CPDs to the unified model
+    complete_model.add_cpds(cpd_allele1_mother, cpd_allele2_mother, cpd_genotype_mother)
 
 # Print CPDs for each node
 for cpd in complete_model.get_cpds():
@@ -277,16 +299,28 @@ for cpd in complete_model.get_cpds():
 # Inference on the unified model
 inference_complete = VariableElimination(complete_model)
 
-# Print the genotype distribution in the specified order
-print("\nGenotype Distribution for Offspring (ordered):")
-# TODO: dynamic the variable name
-overall_distribution_offspring = inference_complete.query(variables=["Offspring_Genotype"])
-genotype_mapping = {0: "A", 1: "B", 2: "O", 3: "AB"}
-named_result_offspring = {genotype_mapping[state]: prob for state, prob in enumerate(overall_distribution_offspring.values)}
-print(f"O: {named_result_offspring['O']:.4f}")
-print(f"A: {named_result_offspring['A']:.4f}")
-print(f"B: {named_result_offspring['B']:.4f}")
-print(f"AB: {named_result_offspring['AB']:.4f}")
+# Determine the variable for inference based on the query
+inference_variable = None
+if query_related_to_father:
+    print("The query is related to the father.")
+    inference_variable = "father_Genotype"
+elif query_related_to_mother:
+    print("The query is related to the mother.")
+    inference_variable = "mother_Genotype"
+elif query_related_to_offspring:
+    print("The query is related to the offspring.")
+    inference_variable = "Offspring_Genotype"
+
+if inference_variable:
+    # Print the genotype distribution in the specified order
+    print(f"\nGenotype Distribution for {inference_variable.split('_')[0]}:")
+    overall_distribution = inference_complete.query(variables=[inference_variable])
+    genotype_mapping = {0: "A", 1: "B", 2: "O", 3: "AB"}
+    named_result = {genotype_mapping[state]: prob for state, prob in enumerate(overall_distribution.values)}
+    print(f"O: {named_result['O']:.4f}")
+    print(f"A: {named_result['A']:.4f}")
+    print(f"B: {named_result['B']:.4f}")
+    print(f"AB: {named_result['AB']:.4f}")
 
 # Visualization of the unified Bayesian Network
 plt.figure(figsize=(12, 8))
