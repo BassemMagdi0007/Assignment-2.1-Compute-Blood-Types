@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 from pgmpy.models import BayesianNetwork
 from pgmpy.factors.discrete import TabularCPD
 from pgmpy.inference import VariableElimination
@@ -114,8 +115,6 @@ def process_problem(problem_type, problem_number):
             # Set object_ as an offspring
             family_members[object_]["role"] = "offspring"
 
-
-
     # Find the blood type for each family member
     for result in test_results:
         person = result.get("person")
@@ -223,18 +222,31 @@ def process_problem(problem_type, problem_number):
     # Perform inference
     inference_complete = VariableElimination(complete_model)
 
+    results = []
     for query in queries:
         person = query.get("person")
         if person in family_members:
             inference_variable = f"{person}_Genotype"
-            print(f"Genotype Distribution for {person}:")
             overall_distribution = inference_complete.query(variables=[inference_variable])
             genotype_mapping = {0: "A", 1: "B", 2: "O", 3: "AB"}
             named_result = {genotype_mapping[state]: prob for state, prob in enumerate(overall_distribution.values)}
-            print(f"O: {named_result['O']:.4f}")
-            print(f"A: {named_result['A']:.4f}")
-            print(f"B: {named_result['B']:.4f}")
-            print(f"AB: {named_result['AB']:.4f}")
+            result = {
+                "type": "bloodtype",
+                "person": person,
+                "distribution": {
+                    "O": named_result["O"],
+                    "A": named_result["A"],
+                    "B": named_result["B"],
+                    "AB": named_result["AB"]
+                }
+            }
+            results.append(result)
+
+    # Save results to a JSON file
+    output_filename = f'e-solutions/solution-{problem_type}-{problem_number:02d}.json'
+    os.makedirs(os.path.dirname(output_filename), exist_ok=True)
+    with open(output_filename, 'w') as outfile:
+        json.dump(results, outfile, indent=4)
 
     # # Visualization of the unified Bayesian Network
     # plt.figure(figsize=(12, 8))
@@ -257,9 +269,8 @@ def process_problem(problem_type, problem_number):
 def main():
     # Define the type of problems
     problem_type = 'a'
-    # problem_number = 0
 
-    # # Process problems from 0 to 14
+    # Process problems from 0 to 14
     for problem_number in range(15):
         print(f"\nProcessing problem {problem_number}...")
         process_problem(problem_type, problem_number)
