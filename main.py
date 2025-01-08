@@ -1,9 +1,13 @@
 import json
+import logging
 from pgmpy.models import BayesianNetwork
 from pgmpy.factors.discrete import TabularCPD
 from pgmpy.inference import VariableElimination
 import networkx as nx
 import matplotlib.pyplot as plt
+
+# Suppress pgmpy warnings
+logging.getLogger("pgmpy").setLevel(logging.ERROR)
 
 # Load a JSON file and return its data
 def load_json(filename):
@@ -77,195 +81,185 @@ def process_problem(problem_type, problem_number):
     else:
         country_cpd = cpd_north_wamponia  # Default to North Wamponia if the country is not recognized
 
-    # Dynamically define the family members (father, mother, offspring)
-    family_members = {"father": None, "mother": None, "offspring": []}
+    # Dynamically define the family members and their relations
+    family_members = {}
+    relations = {}
 
-    # Process family tree to identify the relations
-    for relation in family_tree:
-        subject = relation["subject"]
-        object_ = relation["object"]
-        # Ensure no redundancy; ignore if the subject is already assigned as father or offspring
-        if relation["relation"] == "father-of":
-            if family_members["father"] is None and subject not in family_members["offspring"]:
-                family_members["father"] = subject
-            if object_ not in family_members["offspring"]:
-                family_members["offspring"].append(object_)
+    for key in family_tree:
+        subject = key["subject"]
+        object_ = key["object"]
+        relation_type = key["relation"]
 
-        elif relation["relation"] == "mother-of":
-            if family_members["mother"] is None and subject not in family_members["offspring"]:
-                family_members["mother"] = subject
-            if object_ not in family_members["offspring"]:
-                family_members["offspring"].append(object_)
+        # Initialize family members if not already present
+        if subject not in family_members:
+            family_members[subject] = {"role": None, "bloodtype": None, "offspring": []}
+        if object_ not in family_members:
+            family_members[object_] = {"role": None, "bloodtype": None, "offspring": []}
 
-    # Find the blood type for the father
-    father_bloodtype = None
+        # Update roles and relationships
+        if relation_type == "father-of":
+            family_members[subject]["role"] = "father"
+            family_members[subject]["offspring"].append(object_)
+            if subject not in relations:
+                relations[subject] = []
+            relations[subject].append(object_)
+            # Set object_ as an offspring
+            family_members[object_]["role"] = "offspring"
+        elif relation_type == "mother-of":
+            family_members[subject]["role"] = "mother"
+            family_members[subject]["offspring"].append(object_)
+            if subject not in relations:
+                relations[subject] = []
+            relations[subject].append(object_)
+            # Set object_ as an offspring
+            family_members[object_]["role"] = "offspring"
+
+
+
+    # Find the blood type for each family member
     for result in test_results:
-        if result.get("person") == family_members["father"]:
-            # print("FATHER BLOODTYPE DETECTED")
-            father_bloodtype = result.get("result")
-            break
-
-    # Find the blood type for the mother
-    mother_bloodtype = None
-    for result in test_results:
-        if result.get("person") == family_members["mother"]:
-            # print("MOTHER BLOODTYPE DETECTED")
-            mother_bloodtype = result.get("result")
-            break
-
-    # Find the blood type for the offspring
-    offspring_bloodtype = {}
-    for result in test_results:
-        for child in family_members["offspring"]:
-            if result.get("person") == child:
-                # print(f"OFFSPRING BLOODTYPE DETECTED for {child}")
-                offspring_bloodtype[child] = result.get("result")
-            break
+        person = result.get("person")
+        if person in family_members:
+            family_members[person]["bloodtype"] = result.get("result")
 
     # Print the family structure for debugging
-    father_info = f"{family_members['father']} ({father_bloodtype if father_bloodtype else 'Unknown'})"
-    mother_info = f"{family_members['mother']} ({mother_bloodtype if mother_bloodtype else 'Unknown'})"
-    offspring_info = [f"{child} ({offspring_bloodtype if offspring_bloodtype else 'Unknown'})" for child in family_members["offspring"]]
-    print(f"Father: {father_info}")
-    print(f"Mother: {mother_info}")
-    print(f"Offspring: {offspring_info}")
+    for member, info in family_members.items():
+        role = info['role'].capitalize() if info['role'] else 'Unknown role'
+        bloodtype = info['bloodtype'] if info['bloodtype'] else 'Unknown blood type'
+        print(f"{role}: {member} ({bloodtype})")
 
     # Define the Bayesian Network structure
     complete_model = BayesianNetwork()
 
-    # Check if any query is related to offspring
-    query_related_to_offspring = False
-    query_related_to_father = False
-    query_related_to_mother = False
-    for query in queries:
-        if query.get("person") in family_members["offspring"]:
-            query_related_to_offspring = True
-        elif query.get("person") == family_members["father"]:
-            query_related_to_father = True
-        elif query.get("person") == family_members["mother"]:
-            query_related_to_mother = True
+    # Create nodes and CPDs for each family member
+    for member, info in family_members.items():
+        if info["role"] == "father":
+            if any(family_members[child]["bloodtype"] for child in info["offspring"]):
+                first_offspring_bloodtype = next(family_members[child]["bloodtype"] for child in info["offspring"] if family_members[child]["bloodtype"])
+                cpd_allele1 = TabularCPD(variable=f"{member}_Allele1", variable_card=3, values=calculate_conditional_cpd(first_offspring_bloodtype, country_cpd))
+            else:
+                cpd_allele1 = TabularCPD(variable=f"{member}_Allele1", variable_card=3, values=country_cpd)
+            cpd_allele2 = TabularCPD(variable=f"{member}_Allele2", variable_card=3, values=country_cpd)
+            cpd_genotype = TabularCPD(
+                variable=f"{member}_Genotype",
+                variable_card=4,
+                evidence=[f"{member}_Allele1", f"{member}_Allele2"],
+                evidence_card=[3, 3],
+                values=[
+                    [1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0],  # A
+                    [0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0],  # B
+                    [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0],  # O
+                    [0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0],  # AB
+                ],
+            )
+            complete_model.add_edges_from([
+                (f"{member}_Allele1", f"{member}_Genotype"),
+                (f"{member}_Allele2", f"{member}_Genotype")
+            ])
+            complete_model.add_cpds(cpd_allele1, cpd_allele2, cpd_genotype)
 
-    # If query is related to offspring, assign CPDs directly to offspring alleles
-    if query_related_to_offspring:
-        if not father_bloodtype:
-            cpd_allele1_offspring = TabularCPD(variable="Offspring_Allele1", variable_card=3, values=country_cpd)
-        else:
-            cpd_allele1_offspring = TabularCPD(variable="Offspring_Allele1", variable_card=3, values=calculate_conditional_cpd(father_bloodtype, country_cpd))
+        elif info["role"] == "mother":
+            if any(family_members[child]["bloodtype"] for child in info["offspring"]):
+                first_offspring_bloodtype = next(family_members[child]["bloodtype"] for child in info["offspring"] if family_members[child]["bloodtype"])
+                cpd_allele1 = TabularCPD(variable=f"{member}_Allele1", variable_card=3, values=calculate_conditional_cpd(first_offspring_bloodtype, country_cpd))
+            else:
+                cpd_allele1 = TabularCPD(variable=f"{member}_Allele1", variable_card=3, values=country_cpd)
+            cpd_allele2 = TabularCPD(variable=f"{member}_Allele2", variable_card=3, values=country_cpd)
+            cpd_genotype = TabularCPD(
+                variable=f"{member}_Genotype",
+                variable_card=4,
+                evidence=[f"{member}_Allele1", f"{member}_Allele2"],
+                evidence_card=[3, 3],
+                values=[
+                    [1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0],  # A
+                    [0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0],  # B
+                    [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0],  # O
+                    [0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0],  # AB
+                ],
+            )
+            complete_model.add_edges_from([
+                (f"{member}_Allele1", f"{member}_Genotype"),
+                (f"{member}_Allele2", f"{member}_Genotype")
+            ])
+            complete_model.add_cpds(cpd_allele1, cpd_allele2, cpd_genotype)
 
-        if not mother_bloodtype:
-            cpd_allele2_offspring = TabularCPD(variable="Offspring_Allele2", variable_card=3, values=country_cpd)
-        else:
-            cpd_allele2_offspring = TabularCPD(variable="Offspring_Allele2", variable_card=3, values=calculate_conditional_cpd(mother_bloodtype, country_cpd))
+    # Create nodes and CPDs for offspring based on their parents
+    for father, children in relations.items():
+        for child in children:
+            mother = next((m for m, c in relations.items() if child in c), None)
+            if mother:
+                # Determine CPDs for offspring alleles based on parents' blood types
+                father_bloodtype = family_members[father]["bloodtype"]
+                mother_bloodtype = family_members[mother]["bloodtype"]
 
-        # Define CPDs for Offspring Genotype
-        cpd_genotype_offspring = TabularCPD(
-            variable="Offspring_Genotype",
-            variable_card=4,
-            values=[
-                [1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0],  # A
-                [0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0],  # B
-                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0],  # O
-                [0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0],  # AB
-            ],
-            evidence=["Offspring_Allele1", "Offspring_Allele2"],
-            evidence_card=[3, 3],
-        )
+                if not father_bloodtype:
+                    cpd_allele1 = TabularCPD(variable=f"{child}_Allele1", variable_card=3, values=country_cpd)
+                else:
+                    cpd_allele1 = TabularCPD(variable=f"{child}_Allele1", variable_card=3, values=calculate_conditional_cpd(father_bloodtype, country_cpd))
 
-        # Add nodes and edges for offspring
-        complete_model.add_edges_from([
-            ("Offspring_Allele1", "Offspring_Genotype"),
-            ("Offspring_Allele2", "Offspring_Genotype")
-        ])
-        # Add all CPDs to the unified model
-        complete_model.add_cpds(cpd_allele1_offspring, cpd_allele2_offspring, cpd_genotype_offspring)
+                if not mother_bloodtype:
+                    cpd_allele2 = TabularCPD(variable=f"{child}_Allele2", variable_card=3, values=country_cpd)
+                else:
+                    cpd_allele2 = TabularCPD(variable=f"{child}_Allele2", variable_card=3, values=calculate_conditional_cpd(mother_bloodtype, country_cpd))
 
-    # If query is related to father, assign CPDs for father alleles and genotype
-    if query_related_to_father:
-        if offspring_bloodtype:
-            first_offspring_bloodtype = next(iter(offspring_bloodtype.values()))
-            cpd_allele1_father = TabularCPD(variable="father_Allele1", variable_card=3, values=calculate_conditional_cpd(first_offspring_bloodtype, country_cpd))
-        else:
-            cpd_allele1_father = TabularCPD(variable="father_Allele1", variable_card=3, values=country_cpd)
-        cpd_allele2_father = TabularCPD(variable="father_Allele2", variable_card=3, values=country_cpd)
+                cpd_genotype = TabularCPD(
+                    variable=f"{child}_Genotype",
+                    variable_card=4,
+                    evidence=[f"{child}_Allele1", f"{child}_Allele2"],
+                    evidence_card=[3, 3],
+                    values=[
+                        [1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0],  # A
+                        [0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0],  # B
+                        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0],  # O
+                        [0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0],  # AB
+                    ],
+                )
+                complete_model.add_edges_from([
+                    (f"{child}_Allele1", f"{child}_Genotype"),
+                    (f"{child}_Allele2", f"{child}_Genotype")
+                ])
+                complete_model.add_cpds(cpd_allele1, cpd_allele2, cpd_genotype)
 
-        cpd_genotype_father = TabularCPD(
-            variable="father_Genotype",
-            variable_card=4,
-            evidence=["father_Allele1", "father_Allele2"],
-            evidence_card=[3, 3],
-            values=[
-                [1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0],  # A
-                [0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0],  # B
-                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0],  # O
-                [0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0],  # AB
-            ],
-        )
-
-        complete_model.add_edges_from([
-            ("father_Allele1", "father_Genotype"),
-            ("father_Allele2", "father_Genotype")
-        ])
-
-        complete_model.add_cpds(cpd_allele1_father, cpd_allele2_father, cpd_genotype_father)
-
-    if query_related_to_mother:
-        if offspring_bloodtype:
-            first_offspring_bloodtype = next(iter(offspring_bloodtype.values()))
-            cpd_allele1_mother = TabularCPD(variable="mother_Allele1", variable_card=3, values=calculate_conditional_cpd(first_offspring_bloodtype, country_cpd))
-        else:
-            cpd_allele1_mother = TabularCPD(variable="mother_Allele1", variable_card=3, values=country_cpd)
-        cpd_allele2_mother = TabularCPD(variable="mother_Allele2", variable_card=3, values=country_cpd)
-
-        cpd_genotype_mother = TabularCPD(
-            variable="mother_Genotype",
-            variable_card=4,
-            evidence=["mother_Allele1", "mother_Allele2"],
-            evidence_card=[3, 3],
-            values=[
-                [1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0],  # A
-                [0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0],  # B
-                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0],  # O
-                [0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0],  # AB
-            ],
-        )
-
-        complete_model.add_edges_from([
-            ("mother_Allele1", "mother_Genotype"),
-            ("mother_Allele2", "mother_Genotype")
-        ])
-
-        complete_model.add_cpds(cpd_allele1_mother, cpd_allele2_mother, cpd_genotype_mother)
-
-    # for cpd in complete_model.get_cpds():
-        # print(f"CPD of {cpd.variable}:")
-        # print(cpd)
-
+    # Perform inference
     inference_complete = VariableElimination(complete_model)
 
-    inference_variable = None
-    if query_related_to_father:
-        inference_variable = "father_Genotype"
-    elif query_related_to_mother:
-        inference_variable = "mother_Genotype"
-    elif query_related_to_offspring:
-        inference_variable = "Offspring_Genotype"
+    for query in queries:
+        person = query.get("person")
+        if person in family_members:
+            inference_variable = f"{person}_Genotype"
+            print(f"Genotype Distribution for {person}:")
+            overall_distribution = inference_complete.query(variables=[inference_variable])
+            genotype_mapping = {0: "A", 1: "B", 2: "O", 3: "AB"}
+            named_result = {genotype_mapping[state]: prob for state, prob in enumerate(overall_distribution.values)}
+            print(f"O: {named_result['O']:.4f}")
+            print(f"A: {named_result['A']:.4f}")
+            print(f"B: {named_result['B']:.4f}")
+            print(f"AB: {named_result['AB']:.4f}")
 
-    if inference_variable:
-        # Print the genotype distribution in the specified order
-        print(f"Genotype Distribution for {inference_variable.split('_')[0]}:")
-        overall_distribution = inference_complete.query(variables=[inference_variable])
-        genotype_mapping = {0: "A", 1: "B", 2: "O", 3: "AB"}
-        named_result = {genotype_mapping[state]: prob for state, prob in enumerate(overall_distribution.values)}
-        print(f"O: {named_result['O']:.4f}")
-        print(f"A: {named_result['A']:.4f}")
-        print(f"B: {named_result['B']:.4f}")
-        print(f"AB: {named_result['AB']:.4f}")
+    # # Visualization of the unified Bayesian Network
+    # plt.figure(figsize=(12, 8))
+    # G = nx.DiGraph()
+    # G.add_edges_from(complete_model.edges())
+    # pos = nx.spring_layout(G)
+    # nx.draw(
+    #     G,
+    #     pos,
+    #     with_labels=True,
+    #     node_size=3000,
+    #     node_color="lightgreen",
+    #     font_size=10,
+    #     font_weight="bold",
+    #     arrowsize=20,
+    # )
+    # plt.title("Unified Bayesian Network for Parents and Offspring")
+    # plt.show()
 
 def main():
     # Define the type of problems
     problem_type = 'a'
+    # problem_number = 0
 
-    # Process problems from 0 to 14
+    # # Process problems from 0 to 14
     for problem_number in range(15):
         print(f"\nProcessing problem {problem_number}...")
         process_problem(problem_type, problem_number)
