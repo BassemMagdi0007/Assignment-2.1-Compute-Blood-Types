@@ -1,0 +1,47 @@
+{
+    "family-tree": [
+        {
+            "relation": "father-of",
+            "subject": "Youssef",
+            "object": "Sasha"
+        },
+        {
+            "relation": "mother-of",
+            "subject": "Sasha",
+            "object": "Zeinab"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Youssef",
+            "object": "Sasha"
+        },
+        {
+            "relation": "father-of",
+            "subject": "Youssef",
+            "object": "Maria"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Youssef",
+            "object": "Kim"
+        }
+    ],
+    "country": "North Wumponia",
+    "test-results": [
+        {
+            "type": "bloodtype-test",
+            "person": "Kim",
+            "result": "A"
+        }
+    ],
+    "queries": [
+        {
+            "type": "bloodtype",
+            "person": "Sasha"
+        },
+        {
+            "type": "bloodtype",
+            "person": "Youssef"
+        }
+    ]
+}

@@ -1,0 +1,43 @@
+{
+    "family-tree": [
+        {
+            "relation": "parent-of",
+            "subject": "Mehmet",
+            "object": "Lyn"
+        },
+        {
+            "relation": "mother-of",
+            "subject": "Lyn",
+            "object": "Ava"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Ava",
+            "object": "Zeinab"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Lyn",
+            "object": "Ava"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Mehmet",
+            "object": "Sasha"
+        }
+    ],
+    "country": "North Wumponia",
+    "test-results": [
+        {
+            "type": "bloodtype-test",
+            "person": "Sasha",
+            "result": "AB"
+        }
+    ],
+    "queries": [
+        {
+            "type": "bloodtype",
+            "person": "Mehmet"
+        }
+    ]
+}

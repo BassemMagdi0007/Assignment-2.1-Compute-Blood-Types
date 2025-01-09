@@ -1,0 +1,37 @@
+{
+    "family-tree": [
+        {
+            "relation": "mother-of",
+            "subject": "Amanda",
+            "object": "Prisha"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Prisha",
+            "object": "Linda"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Linda",
+            "object": "Calvin"
+        }
+    ],
+    "country": "North Wumponia",
+    "test-results": [
+        {
+            "type": "bloodtype-test",
+            "person": "Prisha",
+            "result": "AB"
+        }
+    ],
+    "queries": [
+        {
+            "type": "bloodtype",
+            "person": "Calvin"
+        },
+        {
+            "type": "bloodtype",
+            "person": "Amanda"
+        }
+    ]
+}

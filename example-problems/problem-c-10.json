@@ -1,0 +1,42 @@
+{
+    "family-tree": [
+        {
+            "relation": "parent-of",
+            "subject": "Jordan",
+            "object": "Noel"
+        },
+        {
+            "relation": "father-of",
+            "subject": "Noel",
+            "object": "Linda"
+        },
+        {
+            "relation": "father-of",
+            "subject": "Jordan",
+            "object": "Leslie"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Agnieszka",
+            "object": "Jordan"
+        }
+    ],
+    "country": "North Wumponia",
+    "test-results": [
+        {
+            "type": "bloodtype-test",
+            "person": "Linda",
+            "result": "B"
+        }
+    ],
+    "queries": [
+        {
+            "type": "bloodtype",
+            "person": "Leslie"
+        },
+        {
+            "type": "bloodtype",
+            "person": "Noel"
+        }
+    ]
+}

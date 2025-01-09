@@ -1,0 +1,38 @@
+{
+    "family-tree": [
+        {
+            "relation": "parent-of",
+            "subject": "Jordan",
+            "object": "Ahmed"
+        },
+        {
+            "relation": "father-of",
+            "subject": "Jordan",
+            "object": "Kim"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Jordan",
+            "object": "Yufei"
+        }
+    ],
+    "country": "North Wumponia",
+    "test-results": [
+        {
+            "type": "bloodtype-test",
+            "person": "Ahmed",
+            "result": "O"
+        },
+        {
+            "type": "cheap-bloodtype-test",
+            "person": "Kim",
+            "result": "A"
+        }
+    ],
+    "queries": [
+        {
+            "type": "bloodtype",
+            "person": "Jordan"
+        }
+    ]
+}

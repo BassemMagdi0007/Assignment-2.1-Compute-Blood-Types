@@ -1,0 +1,51 @@
+{
+    "family-tree": [
+        {
+            "relation": "parent-of",
+            "subject": "Prisha",
+            "object": "Maria"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Maria",
+            "object": "Nora"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Prisha",
+            "object": "Daniel"
+        },
+        {
+            "relation": "mother-of",
+            "subject": "Nora",
+            "object": "Jordan"
+        },
+        {
+            "relation": "father-of",
+            "subject": "Jordan",
+            "object": "Samantha"
+        }
+    ],
+    "country": "North Wumponia",
+    "test-results": [
+        {
+            "type": "bloodtype-test",
+            "person": "Samantha",
+            "result": "O"
+        }
+    ],
+    "queries": [
+        {
+            "type": "bloodtype",
+            "person": "Nora"
+        },
+        {
+            "type": "bloodtype",
+            "person": "Maria"
+        },
+        {
+            "type": "bloodtype",
+            "person": "Jordan"
+        }
+    ]
+}

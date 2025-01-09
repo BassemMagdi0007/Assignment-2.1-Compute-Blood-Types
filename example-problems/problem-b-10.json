@@ -1,0 +1,33 @@
+{
+    "family-tree": [
+        {
+            "relation": "parent-of",
+            "subject": "Samantha",
+            "object": "Calvin"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Samantha",
+            "object": "Calvin"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Samantha",
+            "object": "Calvin"
+        }
+    ],
+    "country": "South Wumponia",
+    "test-results": [
+        {
+            "type": "bloodtype-test",
+            "person": "Samantha",
+            "result": "B"
+        }
+    ],
+    "queries": [
+        {
+            "type": "bloodtype",
+            "person": "Calvin"
+        }
+    ]
+}

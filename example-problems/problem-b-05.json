@@ -1,0 +1,42 @@
+{
+    "family-tree": [
+        {
+            "relation": "parent-of",
+            "subject": "Yufei",
+            "object": "Kim"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Yufei",
+            "object": "Prisha"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Yufei",
+            "object": "Prisha"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Yufei",
+            "object": "Leslie"
+        }
+    ],
+    "country": "South Wumponia",
+    "test-results": [
+        {
+            "type": "bloodtype-test",
+            "person": "Yufei",
+            "result": "B"
+        }
+    ],
+    "queries": [
+        {
+            "type": "bloodtype",
+            "person": "Prisha"
+        },
+        {
+            "type": "bloodtype",
+            "person": "Leslie"
+        }
+    ]
+}

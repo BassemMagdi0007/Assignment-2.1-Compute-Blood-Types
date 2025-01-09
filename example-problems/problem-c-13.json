@@ -1,0 +1,33 @@
+{
+    "family-tree": [
+        {
+            "relation": "father-of",
+            "subject": "Omar",
+            "object": "Muhammed"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Omar",
+            "object": "Ava"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Omar",
+            "object": "Ava"
+        }
+    ],
+    "country": "North Wumponia",
+    "test-results": [
+        {
+            "type": "cheap-bloodtype-test",
+            "person": "Ava",
+            "result": "A"
+        }
+    ],
+    "queries": [
+        {
+            "type": "bloodtype",
+            "person": "Ava"
+        }
+    ]
+}

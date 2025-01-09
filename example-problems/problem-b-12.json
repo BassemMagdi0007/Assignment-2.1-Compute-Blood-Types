@@ -1,0 +1,61 @@
+{
+    "family-tree": [
+        {
+            "relation": "parent-of",
+            "subject": "Calvin",
+            "object": "Sasha"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Calvin",
+            "object": "Daniel"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Daniel",
+            "object": "Jordan"
+        },
+        {
+            "relation": "father-of",
+            "subject": "Jordan",
+            "object": "Kim"
+        },
+        {
+            "relation": "father-of",
+            "subject": "Kim",
+            "object": "Maria"
+        }
+    ],
+    "country": "South Wumponia",
+    "test-results": [
+        {
+            "type": "bloodtype-test",
+            "person": "Kim",
+            "result": "B"
+        },
+        {
+            "type": "bloodtype-test",
+            "person": "Sasha",
+            "result": "B"
+        },
+        {
+            "type": "bloodtype-test",
+            "person": "Calvin",
+            "result": "A"
+        }
+    ],
+    "queries": [
+        {
+            "type": "bloodtype",
+            "person": "Daniel"
+        },
+        {
+            "type": "bloodtype",
+            "person": "Maria"
+        },
+        {
+            "type": "bloodtype",
+            "person": "Jordan"
+        }
+    ]
+}

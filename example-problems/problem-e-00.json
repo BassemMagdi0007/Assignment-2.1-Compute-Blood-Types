@@ -1,0 +1,41 @@
+{
+    "family-tree": [
+        {
+            "relation": "parent-of",
+            "subject": "Ava",
+            "object": "Lindsay"
+        },
+        {
+            "relation": "mother-of",
+            "subject": "Ava",
+            "object": "Amanda"
+        },
+        {
+            "relation": "mother-of",
+            "subject": "Ava",
+            "object": "Amanda"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Lindsay",
+            "object": "Leslie"
+        }
+    ],
+    "test-results": [
+        {
+            "type": "bloodtype-test",
+            "person": "Ava",
+            "result": "O"
+        }
+    ],
+    "queries": [
+        {
+            "type": "bloodtype",
+            "person": "Lindsay"
+        },
+        {
+            "type": "bloodtype",
+            "person": "Leslie"
+        }
+    ]
+}

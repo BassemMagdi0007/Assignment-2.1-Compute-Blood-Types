@@ -1,0 +1,52 @@
+{
+    "family-tree": [
+        {
+            "relation": "parent-of",
+            "subject": "Dana",
+            "object": "Rory"
+        },
+        {
+            "relation": "father-of",
+            "subject": "Rory",
+            "object": "Kim"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Kim",
+            "object": "Maria"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Rory",
+            "object": "Kim"
+        },
+        {
+            "relation": "mother-of",
+            "subject": "Kim",
+            "object": "Youssef"
+        }
+    ],
+    "country": "North Wumponia",
+    "test-results": [
+        {
+            "type": "cheap-bloodtype-test",
+            "person": "Dana",
+            "result": "AB"
+        },
+        {
+            "type": "cheap-bloodtype-test",
+            "person": "Youssef",
+            "result": "B"
+        }
+    ],
+    "queries": [
+        {
+            "type": "bloodtype",
+            "person": "Rory"
+        },
+        {
+            "type": "bloodtype",
+            "person": "Maria"
+        }
+    ]
+}

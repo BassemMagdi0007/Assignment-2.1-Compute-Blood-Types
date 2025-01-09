@@ -1,0 +1,61 @@
+{
+    "family-tree": [
+        {
+            "relation": "parent-of",
+            "subject": "Maria",
+            "object": "Sasha"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Maria",
+            "object": "Sasha"
+        },
+        {
+            "relation": "mother-of",
+            "subject": "Maria",
+            "object": "Prisha"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Sasha",
+            "object": "Samantha"
+        },
+        {
+            "relation": "mother-of",
+            "subject": "Sasha",
+            "object": "Leslie"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Leslie",
+            "object": "Brian"
+        },
+        {
+            "relation": "mother-of",
+            "subject": "Prisha",
+            "object": "Dana"
+        }
+    ],
+    "test-results": [
+        {
+            "type": "bloodtype-test",
+            "person": "Brian",
+            "result": "A"
+        },
+        {
+            "type": "bloodtype-test",
+            "person": "Prisha",
+            "result": "B"
+        }
+    ],
+    "queries": [
+        {
+            "type": "bloodtype",
+            "person": "Maria"
+        },
+        {
+            "type": "bloodtype",
+            "person": "Samantha"
+        }
+    ]
+}

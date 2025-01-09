@@ -1,0 +1,47 @@
+{
+    "family-tree": [
+        {
+            "relation": "father-of",
+            "subject": "Lindsay",
+            "object": "Calvin"
+        },
+        {
+            "relation": "father-of",
+            "subject": "Calvin",
+            "object": "Kim"
+        },
+        {
+            "relation": "father-of",
+            "subject": "Lindsay",
+            "object": "Zeinab"
+        },
+        {
+            "relation": "father-of",
+            "subject": "Calvin",
+            "object": "Noel"
+        },
+        {
+            "relation": "father-of",
+            "subject": "Noel",
+            "object": "Ayansh"
+        }
+    ],
+    "test-results": [
+        {
+            "type": "bloodtype-test",
+            "person": "Noel",
+            "result": "AB"
+        },
+        {
+            "type": "bloodtype-test",
+            "person": "Calvin",
+            "result": "A"
+        }
+    ],
+    "queries": [
+        {
+            "type": "bloodtype",
+            "person": "Zeinab"
+        }
+    ]
+}

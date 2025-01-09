@@ -1,0 +1,52 @@
+{
+    "family-tree": [
+        {
+            "relation": "parent-of",
+            "subject": "Muhammed",
+            "object": "Maria"
+        },
+        {
+            "relation": "father-of",
+            "subject": "Muhammed",
+            "object": "Maria"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Muhammed",
+            "object": "Nora"
+        },
+        {
+            "relation": "father-of",
+            "subject": "Muhammed",
+            "object": "Maria"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Muhammed",
+            "object": "Ava"
+        },
+        {
+            "relation": "father-of",
+            "subject": "Muhammed",
+            "object": "Maria"
+        }
+    ],
+    "test-results": [
+        {
+            "type": "bloodtype-test",
+            "person": "Maria",
+            "result": "A"
+        },
+        {
+            "type": "bloodtype-test",
+            "person": "Muhammed",
+            "result": "O"
+        }
+    ],
+    "queries": [
+        {
+            "type": "bloodtype",
+            "person": "Nora"
+        }
+    ]
+}

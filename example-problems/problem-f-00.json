@@ -1,0 +1,42 @@
+{
+    "family-tree": [
+        {
+            "relation": "parent-of",
+            "subject": "Lindsay",
+            "object": "Ava"
+        },
+        {
+            "relation": "mother-of",
+            "subject": "Lindsay",
+            "object": "Brian"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Lindsay",
+            "object": "Maria"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Brian",
+            "object": "Nora"
+        }
+    ],
+    "test-results": [
+        {
+            "type": "cheap-bloodtype-test",
+            "person": "Nora",
+            "result": "A"
+        },
+        {
+            "type": "cheap-bloodtype-test",
+            "person": "Ava",
+            "result": "A"
+        }
+    ],
+    "queries": [
+        {
+            "type": "bloodtype",
+            "person": "Maria"
+        }
+    ]
+}

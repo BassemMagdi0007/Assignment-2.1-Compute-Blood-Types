@@ -1,0 +1,42 @@
+{
+    "family-tree": [
+        {
+            "relation": "parent-of",
+            "subject": "Daniel",
+            "object": "Ava"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Daniel",
+            "object": "Agnieszka"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Daniel",
+            "object": "Omar"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Daniel",
+            "object": "Leslie"
+        }
+    ],
+    "test-results": [
+        {
+            "type": "bloodtype-test",
+            "person": "Agnieszka",
+            "result": "AB"
+        },
+        {
+            "type": "cheap-bloodtype-test",
+            "person": "Omar",
+            "result": "B"
+        }
+    ],
+    "queries": [
+        {
+            "type": "bloodtype",
+            "person": "Ava"
+        }
+    ]
+}

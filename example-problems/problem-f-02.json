@@ -1,0 +1,37 @@
+{
+    "family-tree": [
+        {
+            "relation": "mother-of",
+            "subject": "Ira",
+            "object": "Youssef"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Ira",
+            "object": "Leslie"
+        },
+        {
+            "relation": "mother-of",
+            "subject": "Ira",
+            "object": "Youssef"
+        },
+        {
+            "relation": "mother-of",
+            "subject": "Ira",
+            "object": "Youssef"
+        }
+    ],
+    "test-results": [
+        {
+            "type": "bloodtype-test",
+            "person": "Leslie",
+            "result": "A"
+        }
+    ],
+    "queries": [
+        {
+            "type": "bloodtype",
+            "person": "Youssef"
+        }
+    ]
+}

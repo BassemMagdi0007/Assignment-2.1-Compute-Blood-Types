@@ -1,0 +1,74 @@
+{
+    "family-tree": [
+        {
+            "relation": "parent-of",
+            "subject": "Rory",
+            "object": "Nora"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Rory",
+            "object": "Lyn"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Nora",
+            "object": "Samantha"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Mehmet",
+            "object": "Nora"
+        },
+        {
+            "relation": "mother-of",
+            "subject": "Nora",
+            "object": "Youssef"
+        },
+        {
+            "relation": "mother-of",
+            "subject": "Samantha",
+            "object": "Ahmed"
+        },
+        {
+            "relation": "mother-of",
+            "subject": "Nora",
+            "object": "Kim"
+        }
+    ],
+    "test-results": [
+        {
+            "type": "bloodtype-test",
+            "person": "Lyn",
+            "result": "B"
+        },
+        {
+            "type": "bloodtype-test",
+            "person": "Nora",
+            "result": "B"
+        },
+        {
+            "type": "bloodtype-test",
+            "person": "Kim",
+            "result": "A"
+        }
+    ],
+    "queries": [
+        {
+            "type": "bloodtype",
+            "person": "Mehmet"
+        },
+        {
+            "type": "bloodtype",
+            "person": "Rory"
+        },
+        {
+            "type": "bloodtype",
+            "person": "Samantha"
+        },
+        {
+            "type": "bloodtype",
+            "person": "Ahmed"
+        }
+    ]
+}

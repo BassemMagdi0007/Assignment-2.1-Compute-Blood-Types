@@ -1,0 +1,57 @@
+{
+    "family-tree": [
+        {
+            "relation": "parent-of",
+            "subject": "Sasha",
+            "object": "Zeinab"
+        },
+        {
+            "relation": "mother-of",
+            "subject": "Sasha",
+            "object": "Agnieszka"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Agnieszka",
+            "object": "Leslie"
+        },
+        {
+            "relation": "mother-of",
+            "subject": "Agnieszka",
+            "object": "Leslie"
+        },
+        {
+            "relation": "mother-of",
+            "subject": "Leslie",
+            "object": "Daniel"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Daniel",
+            "object": "Muhammed"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Zeinab",
+            "object": "Ayansh"
+        }
+    ],
+    "test-results": [
+        {
+            "type": "bloodtype-test",
+            "person": "Daniel",
+            "result": "A"
+        },
+        {
+            "type": "bloodtype-test",
+            "person": "Sasha",
+            "result": "AB"
+        }
+    ],
+    "queries": [
+        {
+            "type": "bloodtype",
+            "person": "Muhammed"
+        }
+    ]
+}

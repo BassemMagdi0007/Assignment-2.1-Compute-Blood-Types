@@ -1,0 +1,33 @@
+{
+    "family-tree": [
+        {
+            "relation": "parent-of",
+            "subject": "Maria",
+            "object": "Noel"
+        },
+        {
+            "relation": "mother-of",
+            "subject": "Maria",
+            "object": "Noel"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Maria",
+            "object": "Ava"
+        }
+    ],
+    "country": "North Wumponia",
+    "test-results": [
+        {
+            "type": "bloodtype-test",
+            "person": "Maria",
+            "result": "AB"
+        }
+    ],
+    "queries": [
+        {
+            "type": "bloodtype",
+            "person": "Ava"
+        }
+    ]
+}

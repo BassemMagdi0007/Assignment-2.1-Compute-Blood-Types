@@ -1,0 +1,51 @@
+{
+    "family-tree": [
+        {
+            "relation": "father-of",
+            "subject": "Lindsay",
+            "object": "Nora"
+        },
+        {
+            "relation": "father-of",
+            "subject": "Lindsay",
+            "object": "Ayansh"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Lindsay",
+            "object": "Yufei"
+        },
+        {
+            "relation": "mother-of",
+            "subject": "Nora",
+            "object": "Samantha"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Ayansh",
+            "object": "Rory"
+        }
+    ],
+    "test-results": [
+        {
+            "type": "cheap-bloodtype-test",
+            "person": "Samantha",
+            "result": "B"
+        },
+        {
+            "type": "cheap-bloodtype-test",
+            "person": "Yufei",
+            "result": "B"
+        }
+    ],
+    "queries": [
+        {
+            "type": "bloodtype",
+            "person": "Ayansh"
+        },
+        {
+            "type": "bloodtype",
+            "person": "Samantha"
+        }
+    ]
+}

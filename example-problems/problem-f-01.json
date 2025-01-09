@@ -1,0 +1,52 @@
+{
+    "family-tree": [
+        {
+            "relation": "father-of",
+            "subject": "Mehmet",
+            "object": "Maria"
+        },
+        {
+            "relation": "father-of",
+            "subject": "Mehmet",
+            "object": "Jordan"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Mehmet",
+            "object": "Jordan"
+        },
+        {
+            "relation": "father-of",
+            "subject": "Jordan",
+            "object": "Zeinab"
+        },
+        {
+            "relation": "father-of",
+            "subject": "Mehmet",
+            "object": "Dana"
+        },
+        {
+            "relation": "mother-of",
+            "subject": "Maria",
+            "object": "Linda"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Maria",
+            "object": "Prisha"
+        }
+    ],
+    "test-results": [
+        {
+            "type": "cheap-bloodtype-test",
+            "person": "Mehmet",
+            "result": "B"
+        }
+    ],
+    "queries": [
+        {
+            "type": "bloodtype",
+            "person": "Jordan"
+        }
+    ]
+}

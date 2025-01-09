@@ -1,0 +1,60 @@
+{
+    "family-tree": [
+        {
+            "relation": "mother-of",
+            "subject": "Kim",
+            "object": "Lindsay"
+        },
+        {
+            "relation": "mother-of",
+            "subject": "Kim",
+            "object": "Noel"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Noel",
+            "object": "Mehmet"
+        },
+        {
+            "relation": "mother-of",
+            "subject": "Kim",
+            "object": "Noel"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Mehmet",
+            "object": "Ira"
+        },
+        {
+            "relation": "mother-of",
+            "subject": "Kim",
+            "object": "Nora"
+        }
+    ],
+    "test-results": [
+        {
+            "type": "bloodtype-test",
+            "person": "Ira",
+            "result": "B"
+        },
+        {
+            "type": "bloodtype-test",
+            "person": "Noel",
+            "result": "B"
+        }
+    ],
+    "queries": [
+        {
+            "type": "bloodtype",
+            "person": "Lindsay"
+        },
+        {
+            "type": "bloodtype",
+            "person": "Mehmet"
+        },
+        {
+            "type": "bloodtype",
+            "person": "Nora"
+        }
+    ]
+}

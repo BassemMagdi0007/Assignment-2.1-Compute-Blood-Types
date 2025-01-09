@@ -1,0 +1,33 @@
+{
+    "family-tree": [
+        {
+            "relation": "father-of",
+            "subject": "Omar",
+            "object": "Daniel"
+        },
+        {
+            "relation": "father-of",
+            "subject": "Omar",
+            "object": "Yufei"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Omar",
+            "object": "Yufei"
+        }
+    ],
+    "country": "South Wumponia",
+    "test-results": [
+        {
+            "type": "bloodtype-test",
+            "person": "Yufei",
+            "result": "B"
+        }
+    ],
+    "queries": [
+        {
+            "type": "bloodtype",
+            "person": "Omar"
+        }
+    ]
+}

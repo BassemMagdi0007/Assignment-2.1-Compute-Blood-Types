@@ -1,0 +1,61 @@
+{
+    "family-tree": [
+        {
+            "relation": "parent-of",
+            "subject": "Zeinab",
+            "object": "Dana"
+        },
+        {
+            "relation": "mother-of",
+            "subject": "Dana",
+            "object": "Linda"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Zeinab",
+            "object": "Lindsay"
+        },
+        {
+            "relation": "mother-of",
+            "subject": "Linda",
+            "object": "Ayansh"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Zeinab",
+            "object": "Sam"
+        }
+    ],
+    "country": "North Wumponia",
+    "test-results": [
+        {
+            "type": "cheap-bloodtype-test",
+            "person": "Lindsay",
+            "result": "AB"
+        },
+        {
+            "type": "cheap-bloodtype-test",
+            "person": "Sam",
+            "result": "A"
+        },
+        {
+            "type": "cheap-bloodtype-test",
+            "person": "Lindsay",
+            "result": "A"
+        }
+    ],
+    "queries": [
+        {
+            "type": "bloodtype",
+            "person": "Lindsay"
+        },
+        {
+            "type": "bloodtype",
+            "person": "Dana"
+        },
+        {
+            "type": "bloodtype",
+            "person": "Zeinab"
+        }
+    ]
+}

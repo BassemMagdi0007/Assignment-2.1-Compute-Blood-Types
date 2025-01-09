@@ -1,0 +1,52 @@
+{
+    "family-tree": [
+        {
+            "relation": "parent-of",
+            "subject": "Daniel",
+            "object": "Amanda"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Amanda",
+            "object": "Samantha"
+        },
+        {
+            "relation": "father-of",
+            "subject": "Daniel",
+            "object": "Yufei"
+        },
+        {
+            "relation": "father-of",
+            "subject": "Daniel",
+            "object": "Lyn"
+        },
+        {
+            "relation": "father-of",
+            "subject": "Daniel",
+            "object": "Mehmet"
+        },
+        {
+            "relation": "mother-of",
+            "subject": "Yufei",
+            "object": "Kim"
+        }
+    ],
+    "test-results": [
+        {
+            "type": "cheap-bloodtype-test",
+            "person": "Amanda",
+            "result": "A"
+        },
+        {
+            "type": "bloodtype-test",
+            "person": "Daniel",
+            "result": "A"
+        }
+    ],
+    "queries": [
+        {
+            "type": "bloodtype",
+            "person": "Lyn"
+        }
+    ]
+}

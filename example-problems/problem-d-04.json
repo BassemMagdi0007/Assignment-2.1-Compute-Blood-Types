@@ -1,0 +1,38 @@
+{
+    "family-tree": [
+        {
+            "relation": "parent-of",
+            "subject": "Omar",
+            "object": "Samantha"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Samantha",
+            "object": "Youssef"
+        },
+        {
+            "relation": "father-of",
+            "subject": "Youssef",
+            "object": "Zeinab"
+        },
+        {
+            "relation": "father-of",
+            "subject": "Youssef",
+            "object": "Calvin"
+        }
+    ],
+    "country": "North Wumponia",
+    "test-results": [
+        {
+            "type": "cheap-bloodtype-test",
+            "person": "Calvin",
+            "result": "B"
+        }
+    ],
+    "queries": [
+        {
+            "type": "bloodtype",
+            "person": "Youssef"
+        }
+    ]
+}

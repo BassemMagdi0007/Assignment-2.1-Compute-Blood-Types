@@ -1,0 +1,43 @@
+{
+    "family-tree": [
+        {
+            "relation": "mother-of",
+            "subject": "Sasha",
+            "object": "Dana"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Sasha",
+            "object": "Dana"
+        },
+        {
+            "relation": "mother-of",
+            "subject": "Sasha",
+            "object": "Noel"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Sasha",
+            "object": "Nora"
+        }
+    ],
+    "country": "South Wumponia",
+    "test-results": [
+        {
+            "type": "cheap-bloodtype-test",
+            "person": "Noel",
+            "result": "AB"
+        },
+        {
+            "type": "bloodtype-test",
+            "person": "Sasha",
+            "result": "B"
+        }
+    ],
+    "queries": [
+        {
+            "type": "bloodtype",
+            "person": "Nora"
+        }
+    ]
+}

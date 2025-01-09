@@ -1,0 +1,75 @@
+{
+    "family-tree": [
+        {
+            "relation": "father-of",
+            "subject": "Leslie",
+            "object": "Rory"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Leslie",
+            "object": "Sasha"
+        },
+        {
+            "relation": "father-of",
+            "subject": "Rory",
+            "object": "Youssef"
+        },
+        {
+            "relation": "father-of",
+            "subject": "Youssef",
+            "object": "Nora"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Youssef",
+            "object": "Kim"
+        },
+        {
+            "relation": "father-of",
+            "subject": "Youssef",
+            "object": "Jordan"
+        },
+        {
+            "relation": "father-of",
+            "subject": "Leslie",
+            "object": "Yufei"
+        }
+    ],
+    "test-results": [
+        {
+            "type": "cheap-bloodtype-test",
+            "person": "Kim",
+            "result": "A"
+        },
+        {
+            "type": "bloodtype-test",
+            "person": "Rory",
+            "result": "A"
+        },
+        {
+            "type": "cheap-bloodtype-test",
+            "person": "Sasha",
+            "result": "B"
+        },
+        {
+            "type": "cheap-bloodtype-test",
+            "person": "Kim",
+            "result": "A"
+        }
+    ],
+    "queries": [
+        {
+            "type": "bloodtype",
+            "person": "Leslie"
+        },
+        {
+            "type": "bloodtype",
+            "person": "Youssef"
+        },
+        {
+            "type": "bloodtype",
+            "person": "Yufei"
+        }
+    ]
+}

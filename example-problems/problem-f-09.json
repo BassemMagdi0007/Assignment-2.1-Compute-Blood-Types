@@ -1,0 +1,37 @@
+{
+    "family-tree": [
+        {
+            "relation": "mother-of",
+            "subject": "Dana",
+            "object": "Kim"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Dana",
+            "object": "Kim"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Dana",
+            "object": "Calvin"
+        },
+        {
+            "relation": "mother-of",
+            "subject": "Dana",
+            "object": "Ava"
+        }
+    ],
+    "test-results": [
+        {
+            "type": "cheap-bloodtype-test",
+            "person": "Ava",
+            "result": "AB"
+        }
+    ],
+    "queries": [
+        {
+            "type": "bloodtype",
+            "person": "Kim"
+        }
+    ]
+}

@@ -1,0 +1,53 @@
+{
+    "family-tree": [
+        {
+            "relation": "father-of",
+            "subject": "Jordan",
+            "object": "Noel"
+        },
+        {
+            "relation": "father-of",
+            "subject": "Noel",
+            "object": "Mehmet"
+        },
+        {
+            "relation": "father-of",
+            "subject": "Jordan",
+            "object": "Omar"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Noel",
+            "object": "Zeinab"
+        },
+        {
+            "relation": "mother-of",
+            "subject": "Zeinab",
+            "object": "Daniel"
+        }
+    ],
+    "country": "South Wumponia",
+    "test-results": [
+        {
+            "type": "bloodtype-test",
+            "person": "Jordan",
+            "result": "A"
+        },
+        {
+            "type": "bloodtype-test",
+            "person": "Noel",
+            "result": "A"
+        },
+        {
+            "type": "bloodtype-test",
+            "person": "Omar",
+            "result": "A"
+        }
+    ],
+    "queries": [
+        {
+            "type": "bloodtype",
+            "person": "Mehmet"
+        }
+    ]
+}

@@ -1,0 +1,55 @@
+{
+    "family-tree": [
+        {
+            "relation": "parent-of",
+            "subject": "Nora",
+            "object": "Daniel"
+        },
+        {
+            "relation": "father-of",
+            "subject": "Daniel",
+            "object": "Linda"
+        },
+        {
+            "relation": "father-of",
+            "subject": "Daniel",
+            "object": "Sam"
+        },
+        {
+            "relation": "mother-of",
+            "subject": "Nora",
+            "object": "Lindsay"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Daniel",
+            "object": "Sasha"
+        }
+    ],
+    "test-results": [
+        {
+            "type": "cheap-bloodtype-test",
+            "person": "Sam",
+            "result": "B"
+        },
+        {
+            "type": "cheap-bloodtype-test",
+            "person": "Sam",
+            "result": "AB"
+        }
+    ],
+    "queries": [
+        {
+            "type": "bloodtype",
+            "person": "Lindsay"
+        },
+        {
+            "type": "bloodtype",
+            "person": "Sam"
+        },
+        {
+            "type": "bloodtype",
+            "person": "Linda"
+        }
+    ]
+}

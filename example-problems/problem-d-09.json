@@ -1,0 +1,42 @@
+{
+    "family-tree": [
+        {
+            "relation": "parent-of",
+            "subject": "Samantha",
+            "object": "Lindsay"
+        },
+        {
+            "relation": "mother-of",
+            "subject": "Lindsay",
+            "object": "Leslie"
+        },
+        {
+            "relation": "mother-of",
+            "subject": "Lindsay",
+            "object": "Zeinab"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Zeinab",
+            "object": "Lyn"
+        }
+    ],
+    "country": "North Wumponia",
+    "test-results": [
+        {
+            "type": "cheap-bloodtype-test",
+            "person": "Zeinab",
+            "result": "O"
+        }
+    ],
+    "queries": [
+        {
+            "type": "bloodtype",
+            "person": "Samantha"
+        },
+        {
+            "type": "bloodtype",
+            "person": "Lindsay"
+        }
+    ]
+}

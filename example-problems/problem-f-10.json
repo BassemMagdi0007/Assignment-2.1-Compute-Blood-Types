@@ -1,0 +1,41 @@
+{
+    "family-tree": [
+        {
+            "relation": "mother-of",
+            "subject": "Dana",
+            "object": "Kim"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Dana",
+            "object": "Maria"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Kim",
+            "object": "Ahmed"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Maria",
+            "object": "Calvin"
+        }
+    ],
+    "test-results": [
+        {
+            "type": "bloodtype-test",
+            "person": "Ahmed",
+            "result": "AB"
+        }
+    ],
+    "queries": [
+        {
+            "type": "bloodtype",
+            "person": "Dana"
+        },
+        {
+            "type": "bloodtype",
+            "person": "Calvin"
+        }
+    ]
+}

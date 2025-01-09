@@ -1,0 +1,38 @@
+{
+    "family-tree": [
+        {
+            "relation": "parent-of",
+            "subject": "Sam",
+            "object": "Maria"
+        },
+        {
+            "relation": "father-of",
+            "subject": "Sam",
+            "object": "Samantha"
+        },
+        {
+            "relation": "father-of",
+            "subject": "Sam",
+            "object": "Rory"
+        }
+    ],
+    "country": "South Wumponia",
+    "test-results": [
+        {
+            "type": "bloodtype-test",
+            "person": "Rory",
+            "result": "B"
+        },
+        {
+            "type": "cheap-bloodtype-test",
+            "person": "Sam",
+            "result": "B"
+        }
+    ],
+    "queries": [
+        {
+            "type": "bloodtype",
+            "person": "Samantha"
+        }
+    ]
+}

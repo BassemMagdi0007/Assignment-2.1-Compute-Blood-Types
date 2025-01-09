@@ -1,0 +1,43 @@
+{
+    "family-tree": [
+        {
+            "relation": "father-of",
+            "subject": "Leslie",
+            "object": "Dana"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Dana",
+            "object": "Youssef"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Youssef",
+            "object": "Yufei"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Yufei",
+            "object": "Ahmed"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Youssef",
+            "object": "Muhammed"
+        }
+    ],
+    "country": "North Wumponia",
+    "test-results": [
+        {
+            "type": "bloodtype-test",
+            "person": "Dana",
+            "result": "B"
+        }
+    ],
+    "queries": [
+        {
+            "type": "bloodtype",
+            "person": "Youssef"
+        }
+    ]
+}

@@ -1,0 +1,37 @@
+{
+    "family-tree": [
+        {
+            "relation": "mother-of",
+            "subject": "Kim",
+            "object": "Ahmed"
+        },
+        {
+            "relation": "mother-of",
+            "subject": "Kim",
+            "object": "Prisha"
+        },
+        {
+            "relation": "mother-of",
+            "subject": "Prisha",
+            "object": "Rory"
+        }
+    ],
+    "country": "North Wumponia",
+    "test-results": [
+        {
+            "type": "bloodtype-test",
+            "person": "Rory",
+            "result": "B"
+        }
+    ],
+    "queries": [
+        {
+            "type": "bloodtype",
+            "person": "Prisha"
+        },
+        {
+            "type": "bloodtype",
+            "person": "Kim"
+        }
+    ]
+}

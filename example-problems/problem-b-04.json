@@ -1,0 +1,53 @@
+{
+    "family-tree": [
+        {
+            "relation": "mother-of",
+            "subject": "Leslie",
+            "object": "Noel"
+        },
+        {
+            "relation": "mother-of",
+            "subject": "Leslie",
+            "object": "Maria"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Leslie",
+            "object": "Agnieszka"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Maria",
+            "object": "Muhammed"
+        },
+        {
+            "relation": "father-of",
+            "subject": "Muhammed",
+            "object": "Ira"
+        }
+    ],
+    "country": "North Wumponia",
+    "test-results": [
+        {
+            "type": "bloodtype-test",
+            "person": "Agnieszka",
+            "result": "A"
+        },
+        {
+            "type": "bloodtype-test",
+            "person": "Leslie",
+            "result": "A"
+        },
+        {
+            "type": "bloodtype-test",
+            "person": "Muhammed",
+            "result": "A"
+        }
+    ],
+    "queries": [
+        {
+            "type": "bloodtype",
+            "person": "Noel"
+        }
+    ]
+}

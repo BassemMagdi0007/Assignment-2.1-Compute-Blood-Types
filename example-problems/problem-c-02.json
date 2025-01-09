@@ -1,0 +1,38 @@
+{
+    "family-tree": [
+        {
+            "relation": "parent-of",
+            "subject": "Youssef",
+            "object": "Agnieszka"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Agnieszka",
+            "object": "Daniel"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Agnieszka",
+            "object": "Daniel"
+        },
+        {
+            "relation": "father-of",
+            "subject": "Youssef",
+            "object": "Agnieszka"
+        }
+    ],
+    "country": "North Wumponia",
+    "test-results": [
+        {
+            "type": "cheap-bloodtype-test",
+            "person": "Youssef",
+            "result": "B"
+        }
+    ],
+    "queries": [
+        {
+            "type": "bloodtype",
+            "person": "Daniel"
+        }
+    ]
+}

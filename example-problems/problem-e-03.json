@@ -1,0 +1,76 @@
+{
+    "family-tree": [
+        {
+            "relation": "parent-of",
+            "subject": "Sam",
+            "object": "Lindsay"
+        },
+        {
+            "relation": "father-of",
+            "subject": "Sam",
+            "object": "Zeinab"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Zeinab",
+            "object": "Ava"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Zeinab",
+            "object": "Jordan"
+        },
+        {
+            "relation": "mother-of",
+            "subject": "Zeinab",
+            "object": "Maria"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Zeinab",
+            "object": "Ava"
+        },
+        {
+            "relation": "parent-of",
+            "subject": "Sasha",
+            "object": "Omar"
+        },
+        {
+            "relation": "father-of",
+            "subject": "Sam",
+            "object": "Lyn"
+        }
+    ],
+    "test-results": [
+        {
+            "type": "bloodtype-test",
+            "person": "Jordan",
+            "result": "AB"
+        },
+        {
+            "type": "bloodtype-test",
+            "person": "Ava",
+            "result": "AB"
+        },
+        {
+            "type": "bloodtype-test",
+            "person": "Lyn",
+            "result": "AB"
+        },
+        {
+            "type": "bloodtype-test",
+            "person": "Zeinab",
+            "result": "A"
+        }
+    ],
+    "queries": [
+        {
+            "type": "bloodtype",
+            "person": "Maria"
+        },
+        {
+            "type": "bloodtype",
+            "person": "Lindsay"
+        }
+    ]
+}
