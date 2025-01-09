@@ -1,0 +1,32 @@
+[
+    {
+        "type": "bloodtype",
+        "person": "Leslie",
+        "distribution": {
+            "O": 0.109843659,
+            "A": 0.377472867,
+            "B": 0.177081487,
+            "AB": 0.335601986
+        }
+    },
+    {
+        "type": "bloodtype",
+        "person": "Youssef",
+        "distribution": {
+            "O": 0.067496454,
+            "A": 0.736386629,
+            "B": 0.041318583,
+            "AB": 0.154798334
+        }
+    },
+    {
+        "type": "bloodtype",
+        "person": "Yufei",
+        "distribution": {
+            "O": 0.089185029,
+            "A": 0.430010586,
+            "B": 0.257396206,
+            "AB": 0.223408178
+        }
+    }
+]

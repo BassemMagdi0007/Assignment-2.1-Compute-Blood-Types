@@ -1,0 +1,22 @@
+[
+    {
+        "type": "bloodtype",
+        "person": "Youssef",
+        "distribution": {
+            "O": 0.114,
+            "A": 0.2865,
+            "B": 0.3025,
+            "AB": 0.297
+        }
+    },
+    {
+        "type": "bloodtype",
+        "person": "Sasha",
+        "distribution": {
+            "O": 0.018,
+            "A": 0.8225,
+            "B": 0.1265,
+            "AB": 0.033
+        }
+    }
+]

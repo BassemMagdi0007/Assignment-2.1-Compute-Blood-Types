@@ -1,0 +1,42 @@
+[
+    {
+        "type": "bloodtype",
+        "person": "Mehmet",
+        "distribution": {
+            "O": 0.16198048,
+            "A": 0.160668237,
+            "B": 0.566329489,
+            "AB": 0.111021794
+        }
+    },
+    {
+        "type": "bloodtype",
+        "person": "Rory",
+        "distribution": {
+            "O": 0.119406122,
+            "A": 0.058825347,
+            "B": 0.713296741,
+            "AB": 0.10847179
+        }
+    },
+    {
+        "type": "bloodtype",
+        "person": "Samantha",
+        "distribution": {
+            "O": 0.141307855,
+            "A": 0.135845016,
+            "B": 0.587002114,
+            "AB": 0.135845016
+        }
+    },
+    {
+        "type": "bloodtype",
+        "person": "Ahmed",
+        "distribution": {
+            "O": 0.110873248,
+            "A": 0.191536632,
+            "B": 0.532390966,
+            "AB": 0.165199154
+        }
+    }
+]

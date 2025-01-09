@@ -1,0 +1,12 @@
+[
+    {
+        "type": "bloodtype",
+        "person": "Jordan",
+        "distribution": {
+            "O": 0.25,
+            "A": 0.6,
+            "B": 0.15,
+            "AB": 0.0
+        }
+    }
+]

@@ -1,0 +1,32 @@
+[
+    {
+        "type": "bloodtype",
+        "person": "Nora",
+        "distribution": {
+            "O": 0.15625,
+            "A": 0.5,
+            "B": 0.21875,
+            "AB": 0.125
+        }
+    },
+    {
+        "type": "bloodtype",
+        "person": "Maria",
+        "distribution": {
+            "O": 0.109375,
+            "A": 0.5,
+            "B": 0.203125,
+            "AB": 0.1875
+        }
+    },
+    {
+        "type": "bloodtype",
+        "person": "Jordan",
+        "distribution": {
+            "O": 0.25,
+            "A": 0.5,
+            "B": 0.25,
+            "AB": 0.0
+        }
+    }
+]

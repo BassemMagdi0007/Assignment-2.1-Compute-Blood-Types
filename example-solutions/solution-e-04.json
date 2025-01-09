@@ -1,0 +1,22 @@
+[
+    {
+        "type": "bloodtype",
+        "person": "Muhammed",
+        "distribution": {
+            "O": 0.110711115,
+            "A": 0.088207261,
+            "B": 0.667745176,
+            "AB": 0.133336448
+        }
+    },
+    {
+        "type": "bloodtype",
+        "person": "Yufei",
+        "distribution": {
+            "O": 0.185493856,
+            "A": 0.176414521,
+            "B": 0.554771527,
+            "AB": 0.083320095
+        }
+    }
+]

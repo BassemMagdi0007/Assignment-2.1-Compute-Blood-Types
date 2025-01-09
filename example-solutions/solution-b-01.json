@@ -1,0 +1,12 @@
+[
+    {
+        "type": "bloodtype",
+        "person": "Mehmet",
+        "distribution": {
+            "O": 0.108,
+            "A": 0.342,
+            "B": 0.198,
+            "AB": 0.352
+        }
+    }
+]
