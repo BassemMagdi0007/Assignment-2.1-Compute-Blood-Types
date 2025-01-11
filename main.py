@@ -95,12 +95,14 @@ def process_problem(problem_type, problem_number):
         country_cpd = cpd_south_wumponia
     else:
         raise ValueError("Invalid country")
+    
     '''--------------------------------------------------------------------------------------------'''
-
+    '''Define the family members  and their relations'''
     # Dynamically define the family members and their relations
     # Dictionary of dictionaries
     family_members = {}
-    '''family_members = {
+    ''' 
+    family_members = {
             "Kim": 
             {
                 "role": "parent",
@@ -116,8 +118,8 @@ def process_problem(problem_type, problem_number):
         }'''
     # a Dictionary of lists
     relations = {}
-    ''''relations = 
-        {
+    '''' OUTPUT
+    relations = {
             "Kim": ["Ahmed"],
             "Ahmed": ["Calvin", "Linda"],
             "Lindsay": ["Dana"]
@@ -129,22 +131,26 @@ def process_problem(problem_type, problem_number):
         object_ = key["object"]
         relation_type = key["relation"]
 
+        # 1) INITIALIZE THE FAMILY MEMBERS AND RELATIONS
         # CREATE A DICTIONARY FOR EACH SUBJECT AND OBJECT IN THE FAMILY TREE IF THEY DO NOT EXIST
         if subject not in family_members:
-            # family_members[subject] is a dictionary for subjects with keys role, bloodtype, offspring
+            # a Dictionary
             family_members[subject] = {"role": None, "bloodtype": None, "offspring": []}
         if object_ not in family_members:
-            # family_members[object_] is a dictionary for objects with keys role, bloodtype, offspring
+            # a Dictionary
             family_members[object_] = {"role": None, "bloodtype": None, "offspring": []}
 
-        # Update roles and relationships
+        # 2) UPDATE THE ROLES AND RELATIONS FOR THE SUBJECT AND OBJECT
         # For father set the role and add the offspring
         if relation_type == "father-of":
             family_members[subject]["role"] = "father"
             family_members[subject]["offspring"].append(object_)
+            # If the subject(key) is not in the relations dictionary, add it and set the value to an empty list
             if subject not in relations:
                 relations[subject] = []
+            # Append the object to the list of relations for the subject as his offspring
             relations[subject].append(object_)
+            # Set the role of the object to offspring in the family_members dictionary
             family_members[object_]["role"] = "offspring"
 
         # For mother set the role and add the offspring
@@ -165,35 +171,41 @@ def process_problem(problem_type, problem_number):
             relations[subject].append(object_)
             family_members[object_]["role"] = "offspring"
 
-    # Find the blood type for each family member
+    # 3) FIND THE BLOOD TYPE OF EACH FAMILY MEMBER IF EXISTS IN THE TEST RESULTS
     for result in test_results:
         person = result.get("person")
         if person in family_members:
             family_members[person]["bloodtype"] = result.get("result")
 
+    '''--------------------------------------------------------------------------------------------'''
+    ''''PRINTS FOR DEBUGGING'''
+    # Define the Bayesian Network structure
+    complete_model = BayesianNetwork()  
+
     # Print the family structure for debugging
     for member, info in family_members.items():
-        role = info['role'].capitalize() if info['role'] else 'Unknown role'
-        bloodtype = info['bloodtype'] if info['bloodtype'] else 'Unknown blood type'
+        role = info['role'].upper() if info['role'] else 'Unknown role'
+        bloodtype = info['bloodtype'] if info['bloodtype'] else ' '
         print(f"{role}: {member} ({bloodtype})")
 
-    # Define the Bayesian Network structure
-    complete_model = BayesianNetwork()
-
-    print("\nFamily Members: ", family_members)
+    print("\nFAMILY MEMBERS: ", family_members)
+    print("\nRELATIONS: ", relations)
     offsprings = [offspring for member, info in family_members.items() for offspring in info["offspring"]]
-
     print("\nOFFSPRINGS: ", offsprings)
 
-    # Create nodes and CPDs for each family member
+    '''--------------------------------------------------------------------------------------------'''
+    ''''CREATE ALLELES AND GENOTYPE FOR EACH FAMILY MEMBER'''
     for member, info in family_members.items():
-        # add allele 1 and 2 for each member
+        print("\nMEMBER: ", member)
+        print("INFO: ", info)
+        # Add allele 1 and 2 and genotype nodes for each member
         allele1 = f"{member}_Allele1"
         allele2 = f"{member}_Allele2"
-
         # Add nodes to the model
         complete_model.add_nodes_from([allele1, allele2, f"{member}_Genotype"])
 
+    '''--------------------------------------------------------------------------------------------'''
+    '''CREATE CPDs FOR EACH FAMILY MEMBER'''
     # Now add CPDs for each family member
     for member, info in family_members.items():
         allele1 = f"{member}_Allele1"
@@ -203,12 +215,31 @@ def process_problem(problem_type, problem_number):
             cpd_allele1 = TabularCPD(variable=allele1, variable_card=3, values=country_cpd)
             cpd_allele2 = TabularCPD(variable=allele2, variable_card=3, values=country_cpd)
         else:
+            print("\nmember: ", member)
+            # Find the mother of the current member
+            # Iterate over all family members and check if the current member is listed as an offspring
+            # and if the role of the family member is "mother" or "father"
             mother = [m for m in family_members.keys() if
                       member in family_members[m]["offspring"] and family_members[m]["role"] == "mother"]
+            print("MOTHER: ", mother)
+            # Find the father of the current member
+            # Iterate over all family members and check if the current member is listed as an offspring
+            # and if the role of the family member is "father" or "parent"
             father = [f for f in family_members.keys() if
-                      member in family_members[f]["offspring"] and family_members[f]["role"] == "father"]            
+                      member in family_members[f]["offspring"] and family_members[f]["role"] == "father"]  
+            print("FATHER: ", father)      
+            # Find the parent of the current member
+            # Iterate over all family members and check if the current member is listed as an offspring
+            # and if the role of the family member is "parent"    
             parent = [p for p in family_members.keys() if
                       member in family_members[p]["offspring"] and family_members[p]["role"] == "parent"]
+            print("PARENT: ", parent)
+            ''' OUTPUT
+                member:  Ahmed
+                MOTHER:  []
+                FATHER:  []
+                PARENT:  ['Kim']
+            '''
                         
             # FATHER
             if father:
@@ -223,18 +254,14 @@ def process_problem(problem_type, problem_number):
             else:
                 cpd_allele2 = TabularCPD(variable=allele2, variable_card=3, values=country_cpd)
             # PARENT
-            if parent:
-                if not father:
+            if not father and not mother:
+                if parent:
                     cpd_allele1 = TabularCPD(variable=allele1, variable_card=3, evidence=[f"{parent[0]}_Genotype"],
                                             evidence_card=[6], values=OFFSPIRING_CPD)
                 else:
                     cpd_allele1 = TabularCPD(variable=allele1, variable_card=3, values=country_cpd)
                 
-                if not mother:
-                    cpd_allele2 = TabularCPD(variable=allele2, variable_card=3, evidence=[f"{parent[0]}_Genotype"],
-                                            evidence_card=[6], values=OFFSPIRING_CPD)
-                else:
-                    cpd_allele2 = TabularCPD(variable=allele2, variable_card=3, values=country_cpd)
+
 
         complete_model.add_cpds(cpd_allele1, cpd_allele2)
         complete_model.add_edges_from([
@@ -262,7 +289,6 @@ def process_problem(problem_type, problem_number):
                 complete_model.add_edge(f"{person}_Genotype", f"{s}_Allele2")
             elif role == "parent":
                 complete_model.add_edge(f"{person}_Genotype", f"{s}_Allele1")
-                complete_model.add_edge(f"{person}_Genotype", f"{s}_Allele2")
 
     queries_persons = [query.get("person") for query in queries]
     # Perform inference
@@ -326,14 +352,15 @@ def process_problem(problem_type, problem_number):
 def main():
     # Define the type of problems
     problem_type = 'b'
-    # problem_number = 0
-    # Process problems from 0 to 14
-    # process_problem(problem_type, 11)
-    N = 15
+    N = 15  # Number of problems to process
+
     for problem_number in range(N):
-        print(f"\nProcessing problem {problem_number}...")
-        process_problem(problem_type, problem_number)
-    # process_problem(problem_type, problem_number)
+        # try:
+            print(f"\nProcessing problem {problem_number}...")
+            process_problem(problem_type, problem_number)
+        # except Exception as e:
+        #     print(f"Error processing problem {problem_number}: {e}")
+        #     continue
 
     # compare solutions
     for problem_number in range(N):
@@ -345,3 +372,24 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# def main():
+#     # Define the type of problems
+#     problem_type = 'b'
+#     problem_number = 1
+#     # Process problems from 0 to 14
+#     # process_problem(problem_type, 11)
+#     # N = 15
+#     # for problem_number in range(N):
+#     #     print(f"\nProcessing problem {problem_number}...")
+#     #     process_problem(problem_type, problem_number)
+#     process_problem(problem_type, problem_number)
+
+#     # compare solutions
+#     # for problem_number in range(N):
+#     #     true = load_json(f'e-solutions/solution-{problem_type}-{problem_number:02d}.json')
+#     #     pred = load_json(f'example-solutions/solution-{problem_type}-{problem_number:02d}.json')
+#     #     print(f"Problem {problem_number}: {true == pred}")
+
+# if __name__ == "__main__":
+#     main()
