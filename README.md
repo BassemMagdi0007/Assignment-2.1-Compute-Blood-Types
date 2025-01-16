@@ -31,11 +31,13 @@ This project focuses on creating a Bayesian Network to model genetic inheritance
 
 ### How to run the code: 
 1) Make sure that pgmpy library is intalled if not use **pip install pgmpy**
-1) **`maint.py`** and **problems** folder must be on the same folder
+1) **`main.py`** and **problems** folder must be on the same folder
 2) Run the code from the used editor or from the cmd **python main.py**.
 
 ### Used libraries:
-**_os_**
-**_pgmpy_**
+**_pgmpy_**: Python library for probabilistic graphical models that provides tools for creating, manipulating, and performing inference on Bayesian and Markov networks.
+  - **BayesianNetwork:** A directed acyclic graph (DAG) that represents probabilistic dependencies among variables using nodes and edges, allowing you to model complex systems.
+  - **TabularCPD:** A representation of conditional probability distributions in tabular form, which defines the probabilities of a variable given its parent variables.
+  - **VariableElimination:** An inference algorithm used to compute marginal or conditional probabilities efficiently by systematically eliminating variables from the graph.
 
 
