@@ -15,7 +15,7 @@ This repository contains a Python-based implementation of a Bayesian Network des
 - [Output Format](#output-format)
 
 ## Introduction
-This project focuses on creating a Bayesian Network to model genetic inheritance of blood types in families and analyze probabilistic queries about relationships. It incorporates data from JSON files to dynamically build family structures and apply predefined Conditional Probability Distributions (CPDs) for inference.
+This project implements a Bayesian Network-based system to infer blood types and calculate probabilities in a family tree using genetic inheritance rules. The repository contains a modular implementation that reads family data, builds a probabilistic model, and queries it to answer specific questions about blood type distributions. It is designed to solve multiple problems stored in JSON format and outputs solutions in a structured format.
 
 ### Key Features 
 - Dynamic construction of Bayesian Networks based on input family data.
@@ -31,13 +31,45 @@ This project focuses on creating a Bayesian Network to model genetic inheritance
 
 ### How to run the code: 
 1) Make sure that pgmpy library is intalled if not use **pip install pgmpy**
-1) **`main.py`** and **problems** folder must be on the same folder
-2) Run the code from the used editor or from the cmd **python main.py**.
+2) **`main.py`** and **problems** folder must be on the same folder
+3) Run the code from the used editor or from the cmd **python main.py**.
 
 ### Used libraries:
 **_pgmpy_**: Python library for probabilistic graphical models that provides tools for creating, manipulating, and performing inference on Bayesian and Markov networks.
   - **BayesianNetwork:** A directed acyclic graph (DAG) that represents probabilistic dependencies among variables using nodes and edges, allowing you to model complex systems.
+
+
   - **TabularCPD:** A representation of conditional probability distributions in tabular form, which defines the probabilities of a variable given its parent variables.
   - **VariableElimination:** An inference algorithm used to compute marginal or conditional probabilities efficiently by systematically eliminating variables from the graph.
 
 
+## Code Structure
+1) **Library imports**
+```python
+import json
+import logging
+import os
+from pgmpy.models import BayesianNetwork
+from pgmpy.factors.discrete import TabularCPD
+from pgmpy.inference import VariableElimination
+```
+
+2) **Predefined Constants and CPDs**
+```python
+GENOTYPE_CPD = [
+    #AA   AB   AO   BA   BB   BO   OA   OB   OO
+    [1.0, 0.0, ...],  # AA
+    ...
+]
+OFFSPIRING_CPD = [
+    # AA   AO   BB   BO   OO   AB
+    [1.0, 0.5, ...],  # A
+    ...
+]
+```
+The script defines CPDs and constants that represent genetic inheritance patterns and blood type probabilities:
+
+- GENOTYPE_CPD: Maps combinations of alleles (A, B, O) to genotypes (AA, AO, BB, etc.).
+- OFFSPRING_CPD: Models inheritance probabilities of alleles from parents.
+- SUM_6_4: Maps genotypes to possible blood types (A, B, AB, O).
+The allele distributions for two fictional regions ("North Wumponia" and "South Wumponia") are also defined as constants.
