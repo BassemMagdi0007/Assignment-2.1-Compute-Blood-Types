@@ -71,5 +71,23 @@ The script defines CPDs and constants that represent genetic inheritance pattern
 
 - GENOTYPE_CPD: Maps combinations of alleles (A, B, O) to genotypes (AA, AO, BB, etc.).
 - OFFSPRING_CPD: Models inheritance probabilities of alleles from parents.
-- SUM_6_4: Maps genotypes to possible blood types (A, B, AB, O).
+- SUM_6_4: Maps genotypes to possible blood types (A, B, AB, O). <br>
+
 The allele distributions for two fictional regions ("North Wumponia" and "South Wumponia") are also defined as constants.
+
+3) **Helper Functions**
+```python
+def load_json(filepath):
+      # ...
+```
+Reads a JSON file from the specified path and parses its content. If the file is missing or contains invalid JSON, an error message is printed.
+
+```python
+def extract_data(data):
+      # ...
+```
+Extracts specific information from the JSON object:
+- Family tree relationships.
+- Blood type test results.
+- Queries for blood type prediction.
+- The country of origin.
