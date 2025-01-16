@@ -91,3 +91,26 @@ Extracts specific information from the JSON object:
 - Blood type test results.
 - Queries for blood type prediction.
 - The country of origin.
+
+4) **Processing Problems**
+
+```python
+def process_problem(problem_type, problem_number):
+      # ...
+```
+The function handles each problems in the following way:
+- **Load and Parse Data:** <br>
+    The function constructs the file path based on the problem type and number (e.g., problem-A-01.json). It loads the data using load_json() and extracts relevant details with extract_data().
+
+- **Determine CPD Based on Country:** <br>
+    Based on the "country" field, it selects the appropriate allele distribution CPD (cpd_north_wumponia or cpd_south_wumponia).
+
+- **Build Family Structure:** <br>
+The script dynamically constructs two dictionaries: <br>
+    - family_members: Tracks each family member's role, known blood type, and offspring.
+    - relations: Maps parents to their offspring for easier traversal. <br>
+    
+    It iterates over the family_tree field in the JSON file, updating roles (e.g., "father", "mother", "parent") and relationships.
+
+- **Assign Blood Types:** <br>
+  If test results are available, they are assigned to the corresponding individuals in family_members.
