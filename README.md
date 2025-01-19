@@ -323,11 +323,54 @@ The process_problem function is the core of the script. It handles loading probl
           
 ## Self Evaluation and Design Decisions
 
+### 1) Different approaches trials to create the Bayesian Network:
 
+#### [Network v1 Structure]: 
+**The network consisted of the following nodes:**
+- **Father's Allele (Allele1):** Represents one allele contributed by the father.
+- **Mother's Allele (Allele2):** Represents one allele contributed by the mother.
+- Offspring's Genotype: Combines Allele1 and Allele2 to determine the offspring's blood type.
+As for the CPDs, calculations was done manually for a given bloodtypes; <br>
 
+  <img width="269" alt="image" src="https://github.com/user-attachments/assets/b5d523dc-8584-4ac3-89b0-239c436ee4fa" />
 
+For example in `problem-a-00.json`: <br>
 
+  <img width="514" alt="image" src="https://github.com/user-attachments/assets/6d5f534a-ee97-471f-a249-e342d96a560b" />
 
+**Given the following information from the input JSON file:**
+- **Country:** North Wumponia
+- **Mother’s Blood Type:** A
+
+**The CPDs (Conditional Probability Distributions) were assigned as follows:**
+- **Mother's Allele (Allele2):** The blood type A CPD was directly assigned to Allele2 to represent the mother's contribution.
+
+- **Father's Allele (Allele1):** Since the father’s blood type was not provided, the Allele1 node was assigned the CPD specific to North Wumponia (cpd_north_wumponia).
+
+#### Limitations:
+**While this approach worked for inferring the offspring’s blood type distribution, it presented several limitations:**
+- Restricted Query Capabilities:
+   - The network was designed to support queries only for the offspring’s genotype, as this node had a variable cardinality of 4 (representing the blood types A, B, O, AB).
+   - Parental nodes could not support similar queries due to the lack of structure to infer their genotypes or alleles.
+- Challenges with Parent Queries: 
+   - To query a parent's genotype, that parent node would need to be redefined as the Genotype node. This required:
+      - Adjusting the edges, as the Father's Genotype and Mother's Genotype are independent.
+      - Adding a new node to incorporate either the offspring’s blood type (if available) or external country-specific CPD data.
+     
+These changes introduced unnecessary complexity, making the network rigid and less adaptable for future problem scenarios.
+
+#### [Network v2 Structure]:
+**The network consisted of the following nodes (FOR EACH MEMBER):**
+- Allele1
+- Allele2
+- Genotype
+
+The same idea of v1 was applied but in this network every person has his own network (Allele1, Allele2, Genotype) but there's no relation/connection between the parents genotypes and the offspring alleles. <br>
+<img width="557" alt="image" src="https://github.com/user-attachments/assets/ee5894ae-06e3-4212-8d17-8ab6a4aae971" />
+
+### Adressing cheap-bloodtype-test problems:
+
+### Adressing no country specidfied problems:
 
 
 
