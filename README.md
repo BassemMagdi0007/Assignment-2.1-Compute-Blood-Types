@@ -120,13 +120,13 @@ The script defines CPDs and constants that represent genetic inheritance pattern
 - SUM_6_4:  <br>
     -  Maps genotypes to possible blood types (A, B, AB, O).
     -  Includes the relationship between genotype frequency and blood type probability, considering co-dominance (e.g., A results from AA and AO).
-
  - Countries CPDs: <br>
      -  The allele distributions for two fictional regions ("North Wumponia" and "South Wumponia") are also defined as constants.
         ```python
         cpd_north_wumponia = [[0.5], [0.25], [0.25]]
         cpd_south_wumponia = [[0.15], [0.55], [0.30]]
         ```
+        
 3) **Helper Functions**
 ```python
 def load_json(filepath):
@@ -139,10 +139,10 @@ def extract_data(data):
       # ...
 ```
 Extracts specific information from the JSON object:
-- Family tree relationships.
-- Blood type test results.
-- Queries for blood type prediction.
-- The country of origin.
+- Extracts relevant sections (e.g., family-tree, test-results, queries, and country) from the parsed JSON file.
+- Returns a structured dictionary for easier access.
+- 
+These functions ensure that input data is processed systematically and robustly, even in the presence of errors.
 
 4) **Processing Problems**
 
@@ -150,9 +150,23 @@ Extracts specific information from the JSON object:
 def process_problem(problem_type, problem_number):
       # ...
 ```
+The process_problem function is the core of the script. It handles loading problem-specific data, constructing a Bayesian network based on genetic inheritance, performing inference, and saving the results in the required format.
+
 The function handles each problems in the following way:
 - **Load and Parse Data:** <br>
     The function constructs the file path based on the problem type and number (e.g., problem-A-01.json). It loads the data using load_json() and extracts relevant details with extract_data().
+    ```python
+    filename = f'example-problems/problem-{problem_type}-{problem_number:02d}.json'
+    data = load_json(filename)
+    ```
+    If the file is missing or invalid, the function logs an error and skips further processing.
+  Then we extract relevant information from the parsed JSON data using
+    ```python
+        def extract_data(data):
+        return {
+                  #...
+               }
+     ```
 
 - **Determine CPD Based on Country:** <br>
     Based on the "country" field, it selects the appropriate allele distribution CPD (cpd_north_wumponia or cpd_south_wumponia).
