@@ -337,7 +337,7 @@ As for the CPDs, calculations was done manually for a given bloodtypes; <br>
 
   <img width="269" alt="image" src="https://github.com/user-attachments/assets/b5d523dc-8584-4ac3-89b0-239c436ee4fa" />
 
-For example in `problem-a-00.json`: <br>
+**For example in `problem-a-00.json`:** <br>
 
   <img width="514" alt="image" src="https://github.com/user-attachments/assets/6d5f534a-ee97-471f-a249-e342d96a560b" />
 
