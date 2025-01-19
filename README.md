@@ -15,19 +15,58 @@ This repository contains a Python-based implementation of a Bayesian Network des
 - [Output Format](#output-format)
 
 ## Introduction
-This project implements a Bayesian Network-based system to infer blood types and calculate probabilities in a family tree using genetic inheritance rules. The repository contains a modular implementation that reads family data, builds a probabilistic model, and queries it to answer specific questions about blood type distributions. It is designed to solve multiple problems stored in JSON format and outputs solutions in a structured format.
+This project implements a Bayesian Network-based system to infer blood types and calculate probabilities in a family tree using genetic inheritance rules. The provided code is designed to solve problems based on Bayesian networks by determining the probability distribution of blood types for individuals in a family tree. The task involves modeling the inheritance of blood types through alleles and using test results to refine these probabilities.
+
+The main objectives are:
+
+ - **Modeling:** Represent family relationships and blood type inheritance as a Bayesian network.
+ - **Inference:** Use Bayesian reasoning to calculate the likelihood of each blood type for a queried individual.
+ - **Automation:** Dynamically build models from problem-specific JSON files and solve queries programmatically.
+
+This implementation uses pgmpy, a Python library for probabilistic graphical models, to handle Bayesian networks and perform inference. The repository contains a modular implementation that reads family data, builds a probabilistic model, and queries it to answer specific questions about blood type distributions. It is designed to solve multiple problems stored in JSON format and outputs solutions in a structured format.
 
 ### Key Features 
-- Dynamic construction of Bayesian Networks based on input family data.
-- Implementation of genetic inheritance rules for blood type prediction.
-- Use of Variable Elimination for probabilistic inference.
-- JSON-based input and output for ease of data handling.
+ - **Dynamic Bayesian Network Construction:** <br>
+Automatically constructs the network based on family trees, allele distributions, and test results provided in the input JSON files.
+
+ - **Handling Allele Distributions by Country:** <br>
+Supports allele distributions specific to the fictional countries North Wumponia and South Wumponia, which influence the likelihood of each blood type.
+
+ - **Inference Automation:** <br>
+Uses test results and queries to perform variable elimination, calculating blood type distributions for queried individuals.
+
+ - **JSON-based Problem Solving:** <br>
+Parses JSON problem files to extract family relationships, test results, and queries, making it adaptable to a variety of input configurations.
+
+ - **Result Formatting:** <br>
+Outputs solutions in the prescribed JSON format, ensuring compatibility with the assignment requirements.
 
 ## Setup
-### This repository contains:
-1) main.py: Main script to execute the Bayesian Network creation and inference.
-2) problems/: Contains problem JSON files.
-3) p-solutions/: Generated solutions after executing the code
+### To set up the environment and run the code, follow these steps: 
+1) **Install Python Dependencies:** Ensure you have Python installed (recommended version: Python 3.8 or later) and install the required libraries using:
+```bash
+pip install pgmpy
+```
+
+### Repository Content:
+1) **`main.py`:** Main python script to execute the Bayesian Network creation and inference.
+2) **problems/:** Problems Directory contains the JSON problem files.
+3) **p-solutions/:** Solutions directory Stores the output JSON files with results in the following format:
+```python
+[
+    {
+        "type": "bloodtype",
+        "person": "Rory",
+        "distribution": {
+            "O": 0.25,
+            "A": 0.5,
+            "B": 0.25,
+            "AB": 0.0
+        }
+    }
+]
+
+```
 
 ### How to run the code: 
 1) Make sure that pgmpy library is intalled if not use **pip install pgmpy**
