@@ -282,12 +282,12 @@ The process_problem function is the core of the script. It handles loading probl
         complete_model.add_nodes_from([allele1, allele2, f"{member}_Genotype"])
         ```  
        - **Assigning CPDs:**
-          - For individuals without known parentage:
+          - **For individuals without known parentage:**
               - Their alleles are directly assigned CPDs based on the regional distribution (country_cpd).
               ```python
               cpd_allele1 = TabularCPD(variable=allele1, variable_card=3, values=country_cpd)
               ```
-          - For offsprings:
+          - **For offsprings:**
                - Their alleles depend on the genotype of their parents (if known) or the country_cpd otherwise.
               ```python
               if father:
@@ -306,17 +306,17 @@ The process_problem function is the core of the script. It handles loading probl
             ```
             
   5) **Performing Inference:**
-      - Blood Type Queries:
+      - **Blood Type Queries:**
           - For queried individuals or those with known blood types, a `Bloodtype` node is added, and its CPD is set based on genotype:
           ```python
           cpd = TabularCPD(variable=bloodtype_node, variable_card=4, evidence=[f"{member}_Genotype"], ...)
           ```
-      - Evidence Integration:
+      - **Evidence Integration:**
           - Known blood types from the family are used as evidence to refine the probability distributions:
           ```python
           evidence[f"{member}_Bloodtype"] = ['A', 'B', 'O', 'AB'].index(info["bloodtype"])
           ```
-      - Inference Execution:
+      - **Inference Execution:**
           - The `VariableElimination` method calculates:
                - Blood type probabilities for queries.
                - Genotypes and alleles for individuals not constrained by evidence.
