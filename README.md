@@ -64,14 +64,14 @@ Outputs solutions in the prescribed JSON format, ensuring compatibility with the
 
 ### To set up the environment and run the code, follow these steps: 
 1) **Install Python Dependencies:** Ensure you have Python installed (recommended version: Python 3.8 or later) and install the required libraries using:
-```bash
-pip install pgmpy
-```
+    ```bash
+    pip install pgmpy
+    ```
 2) **`main.py`** and **problems** directory must be on the same folder
 3) Run the code from the used editor or from the cmd
-```python
-python main.py
-```
+    ```python
+    python main.py
+    ```
 
 ### Used libraries:
 **_pgmpy_**: Python library for probabilistic graphical models that provides tools for creating, manipulating, and performing inference on Bayesian and Markov networks.
@@ -111,12 +111,22 @@ OFFSPIRING_CPD = [
 ```
 The script defines CPDs and constants that represent genetic inheritance patterns and blood type probabilities:
 
-- GENOTYPE_CPD: Maps combinations of alleles (A, B, O) to genotypes (AA, AO, BB, etc.).
-- OFFSPRING_CPD: Models inheritance probabilities of alleles from parents.
-- SUM_6_4: Maps genotypes to possible blood types (A, B, AB, O). <br>
+- GENOTYPE_CPD: <br>
+    -  Maps combinations of alleles (A, B, O) to genotypes (AA, AO, BB, etc.).
+    -  Rows represent genotypes; columns correspond to all possible allele combinations.
+- OFFSPRING_CPD: <br>
+    -  Represents the probabilistic inheritance from parents Genotypes to offspring alleels.
+    -  Rows represent the ABO gene (A,B,O); columns correspond to genotypes.
+- SUM_6_4:  <br>
+    -  Maps genotypes to possible blood types (A, B, AB, O).
+    -  Includes the relationship between genotype frequency and blood type probability, considering co-dominance (e.g., A results from AA and AO).
 
-The allele distributions for two fictional regions ("North Wumponia" and "South Wumponia") are also defined as constants.
-
+ - Countries CPDs: <br>
+     -  The allele distributions for two fictional regions ("North Wumponia" and "South Wumponia") are also defined as constants.
+        ```python
+        cpd_north_wumponia = [[0.5], [0.25], [0.25]]
+        cpd_south_wumponia = [[0.15], [0.55], [0.30]]
+        ```
 3) **Helper Functions**
 ```python
 def load_json(filepath):
