@@ -42,12 +42,6 @@ Parses JSON problem files to extract family relationships, test results, and que
 Outputs solutions in the prescribed JSON format, ensuring compatibility with the assignment requirements.
 
 ## Setup
-### To set up the environment and run the code, follow these steps: 
-1) **Install Python Dependencies:** Ensure you have Python installed (recommended version: Python 3.8 or later) and install the required libraries using:
-```bash
-pip install pgmpy
-```
-
 ### Repository Content:
 1) **`main.py`:** Main python script to execute the Bayesian Network creation and inference.
 2) **problems/:** Problems Directory contains the JSON problem files.
@@ -68,19 +62,28 @@ pip install pgmpy
 
 ```
 
-### How to run the code: 
-1) Make sure that pgmpy library is intalled if not use **pip install pgmpy**
-2) **`main.py`** and **problems** folder must be on the same folder
-3) Run the code from the used editor or from the cmd **python main.py**.
+### To set up the environment and run the code, follow these steps: 
+1) **Install Python Dependencies:** Ensure you have Python installed (recommended version: Python 3.8 or later) and install the required libraries using:
+```bash
+pip install pgmpy
+```
+2) **`main.py`** and **problems** directory must be on the same folder
+3) Run the code from the used editor or from the cmd
+```python
+python main.py
+```
 
 ### Used libraries:
 **_pgmpy_**: Python library for probabilistic graphical models that provides tools for creating, manipulating, and performing inference on Bayesian and Markov networks.
   - **BayesianNetwork:** A directed acyclic graph (DAG) that represents probabilistic dependencies among variables using nodes and edges, allowing you to model complex systems.
-
-
   - **TabularCPD:** A representation of conditional probability distributions in tabular form, which defines the probabilities of a variable given its parent variables.
   - **VariableElimination:** An inference algorithm used to compute marginal or conditional probabilities efficiently by systematically eliminating variables from the graph.
 
+**_logging_**: The logging module is used to suppress warnings from pgmpy, which might clutter the console output.
+
+**_json_**: The json module is utilized for reading and writing JSON files. It parses the input files containing family trees, test results, and queries (json.load) and saves the computed results in the specified output format (json.dump). This module ensures seamless handling of the JSON-based problem files.
+
+**_os_**: The os module facilitates file and directory management. It is used to dynamically generate paths (os.path.join), create directories if they don’t exist (os.makedirs)
 
 ## Code Structure
 1) **Library imports**
