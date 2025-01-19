@@ -153,32 +153,34 @@ The process_problem function is the core of the script. It handles loading probl
 
 **The function handles each problems in the following way:**
 1) **Load and Parse Data:** <br>
-    The function constructs the file path based on the problem type and number (e.g., problem-A-01.json). It loads the data using load_json() and extracts relevant details with extract_data().
+    The function constructs the file path based on the problem type and number (e.g., `problem-a-01.json`). It loads the data using `load_json()` and extracts relevant details with `extract_data()`.
     ```python
     filename = f'example-problems/problem-{problem_type}-{problem_number:02d}.json'
     data = load_json(filename)
     ```
-    If the file is missing or invalid, the function logs an error and skips further processing.
-  Then we extract relevant information from the parsed JSON data using
     ```python
-        def extract_data(data):
-        return {
-                  #...
-               }
-     ```
+    extracted_data = extract_data(data)
+    family_tree = extracted_data["family_tree"]
+    test_results = extracted_data["test_results"]
+    queries = extracted_data["queries"]
+    country = extracted_data["country"]
+    ```
+    If the file is missing or invalid, the function logs an error and skips further processing.
+
 
 2) **Determine CPD Based on Country:** <br>
     Based on the "country" field, it selects the appropriate allele distribution CPD (cpd_north_wumponia or cpd_south_wumponia).
 
 3) **Build Family Structure:**
-    1) Initializing Family Members: Each individual in the family_tree is dynamically represented as a dictionary with three attributes:
+    1) **Initializing Family Members:** <br>
+    Each individual in the `family_tree` is dynamically represented as a dictionary with three attributes:
         - **role** (father, mother, parent, offspring).
         - **bloodtype** (e.g., A, B, AB, or O if known, otherwise None).
         - **offspring** (list of children).
         ```python
         family_members[subject] = {"role": None, "bloodtype": None, "offspring": []}
         ```
-        Leading to eventually constructing the dictionary of dictionaries "family_member" in such manner: 
+        Leading to eventually constructing the dictionary of dictionaries `family_member` in such manner: 
         ```python
         family_members = {
                 "Kim": 
@@ -195,10 +197,11 @@ The process_problem function is the core of the script. It handles loading probl
                 }
             }
         ```
-    2) Updating Relationships: For each relationship (father-of, mother-of, parent-of):
+    2) **Updating Relationships:** <br>
+    For each relationship (father-of, mother-of, parent-of):
         -  The role of the subject (e.g., father, mother, parent) is set.
         -  The object (child) is added to the subject's offspring list.
-        -  The relationships are also maintained in a relations dictionary.
+        -  The relationships are also maintained in a `relations` dictionary.
         (e.g. For a family tree like:
         ```python
         [
@@ -208,7 +211,7 @@ The process_problem function is the core of the script. It handles loading probl
             {"relation": "mother-of", "subject": "Lindsay", "object": "Dana"}
         ]
         ```
-        The resulting relations dictionary will look like this:
+        The resulting `relations` dictionary will look like this:
         ```python
         relations = {
             "Kim": ["Ahmed"],
@@ -216,6 +219,59 @@ The process_problem function is the core of the script. It handles loading probl
             "Lindsay": ["Dana"]
         }
         ```
+        This structure is later used to connect nodes in the Bayesian network and model inheritance patterns.
+   3) **Assigning Blood Types:** <br>
+   Known blood types from `test_results` are linked to the corresponding individuals in the `family_members` dictionary:
+        ```python
+        for result in test_results:
+            person = result.get("person")
+            family_members[person]["bloodtype"] = result.get("result")
+        ```
+    
+    The preceding processes (i, ii, iii) will transform the data into a more structured and visually coherent format, which will enhance both data processing and debugging efficiency.
+   
+   For instance, consider the example from `problem-a-00.json`:
+     ```python
+          "family-tree": [
+      {
+          "relation": "father-of",
+          "subject": "Ayansh",
+          "object": "Dana"
+      },
+      {
+          "relation": "mother-of",
+          "subject": "Lyn",
+          "object": "Dana"
+      }
+     "test-results": [
+      {
+          "type": "bloodtype-test",
+          "person": "Lyn",
+          "result": "A"
+      }
+      ```
+   The debugging outputs would be as follows:
+   
+    ```python
+    FATHER: Ayansh ( )
+    OFFSPRING: Dana ( )
+    MOTHER: Lyn (A)
+    ```
+
+    ```python
+    MEMBER:  Ayansh
+    INFO:  {'role': 'father', 'bloodtype': None, 'offspring': ['Dana']}
+    MEMBER:  Lyn
+    INFO:  {'role': 'mother', 'bloodtype': 'A', 'offspring': ['Dana']}
+     ```
+
+    ```python
+    member:  Dana
+    MOTHER:  ['Lyn']
+    FATHER:  ['Ayansh']
+    PARENT:  []
+     ```  
+
 
    
 
