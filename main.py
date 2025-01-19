@@ -1,16 +1,16 @@
 import json
 import logging
 import os
+import random
 from pgmpy.models import BayesianNetwork
 from pgmpy.factors.discrete import TabularCPD
 from pgmpy.inference import VariableElimination
-import matplotlib.pyplot as plt
-import networkx as nx
+
 '''------------------------------------------------------------------------------------------------'''
-#DONE
 # Suppress pgmpy warnings
 logging.getLogger("pgmpy").setLevel(logging.ERROR)
-
+# Alleles, NORTH: |A: [0.75,0.0,0.25], |B: [0.0,0.6667,0.3333], |O: [0.0,0.0,1.0], |AB: [0.5,0.5,0.0]
+# Alleles, SOUTH: |A: [0.6,0.0,0.4],   |B: [0.0,0.7392,0.2608], |O: [0.0,0.0,1.0], |AB: [0.5,0.5,0.0]
 '''Pre-defined Conditional Probability Distributions (CPDs) for the alleles and genotypes'''
 GENOTYPE_CPD = [
     #AA   AB   AO   BA   BB   BO   OA   OB   OO
@@ -36,17 +36,19 @@ SUM_6_4 = [
     [0.0, 0.0, 0.0, 0.0, 1.0, 0.0],  # O
     [0.0, 0.0, 0.0, 0.0, 0.0, 1.0],  # AB
 ]
+
 '''------------------------------------------------------------------------------------------------'''
-#DONE
 '''Read the JSON file and return its data'''
 # Load a JSON file and return its data
-def load_json(filename):
+def load_json(filepath):
     try:
-        with open(filename, 'r') as file:
-            return json.load(file)
-    except Exception as e:
-        print(f"Error loading JSON file: {e}")
-        return None
+        with open(filepath, 'r') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        print(f"Error loading JSON file: [Errno 2] No such file or directory: '{filepath}'")
+    except json.JSONDecodeError:
+        print(f"Error decoding JSON file: '{filepath}'")
+    return None
 
 # Extract relevant information from the parsed JSON data
 def extract_data(data):
@@ -60,17 +62,16 @@ def extract_data(data):
         #String containing the country
         "country": data.get("country", None)
     }
+
 '''------------------------------------------------------------------------------------------------'''
-#DONE
 def process_problem(problem_type, problem_number):
     # Conditional Probability Distributions (CPDs) for the alleles and genotypes
     cpd_north_wumponia = [[0.5], [0.25], [0.25]]
     cpd_south_wumponia = [[0.15], [0.55], [0.30]]
+    cpd_unspecified_country = [[0.325], [0.4], [0.275]]
 
     '''--------------------------------------------------------------------------------------------'''
     ''''Load and extract data from JSON file, check the country and define the country CPD'''
-    #DONE
-
     # Load and extract data from JSON file
     filename = f'example-problems/problem-{problem_type}-{problem_number:02d}.json'
     data = load_json(filename)
@@ -93,8 +94,11 @@ def process_problem(problem_type, problem_number):
         country_cpd = cpd_north_wumponia
     elif country == "South Wumponia":
         country_cpd = cpd_south_wumponia
+    elif country is None:
+        country_cpd = cpd_unspecified_country
     else:
-        raise ValueError("Invalid country")
+        print(f"Skipping problem {problem_number} due to invalid or missing country: {country}")
+        return
     
     '''--------------------------------------------------------------------------------------------'''
     '''Define the family members  and their relations'''
@@ -175,7 +179,17 @@ def process_problem(problem_type, problem_number):
     for result in test_results:
         person = result.get("person")
         if person in family_members:
-            family_members[person]["bloodtype"] = result.get("result")
+            if result.get("type") == "cheap-bloodtype-test":
+                # 20% chance of incorrect result
+                if random.random() < 0.2:
+                    # Randomly select a different person's blood type from the same country
+                    other_person = random.choice([p for p in family_members.keys() if p != person])
+                    family_members[person]["bloodtype"] = family_members[other_person]["bloodtype"]
+                else:
+                    family_members[person]["bloodtype"] = result.get("result")
+            else:
+                family_members[person]["bloodtype"] = result.get("result")
+
 
     '''--------------------------------------------------------------------------------------------'''
     ''''PRINTS FOR DEBUGGING'''
@@ -262,7 +276,6 @@ def process_problem(problem_type, problem_number):
                     cpd_allele1 = TabularCPD(variable=allele1, variable_card=3, values=country_cpd)
                 
 
-
         complete_model.add_cpds(cpd_allele1, cpd_allele2)
         complete_model.add_edges_from([
             (allele1, f"{member}_Genotype"),
@@ -344,52 +357,30 @@ def process_problem(problem_type, problem_number):
             results.append(result)
 
     # Save results to a JSON file
-    output_filename = f'e-solutions/solution-{problem_type}-{problem_number:02d}.json'
+    output_filename = os.path.join(os.getcwd(), f'p-solutions/solution-{problem_type}-{problem_number:02d}.json')
     os.makedirs(os.path.dirname(output_filename), exist_ok=True)
     with open(output_filename, 'w') as outfile:
         json.dump(results, outfile, indent=4)
 
+import glob
+
 def main():
-    # Define the type of problems
-    problem_type = 'b'
-    N = 15  # Number of problems to process
+    # Ensure the p-solutions directory exists
+    os.makedirs(os.path.join(os.getcwd(), 'p-solutions'), exist_ok=True)
 
-    for problem_number in range(N):
-        # try:
-            print(f"\nProcessing problem {problem_number}...")
+    # Get all problem files in the problems folder
+    problem_files = glob.glob(os.path.join(os.getcwd(), 'problems', '*.json'))
+
+    for problem_file in problem_files:
+        try:
+            # Extract problem type and number from the filename
+            filename = os.path.basename(problem_file)
+            problem_type, problem_number = filename.split('-')[1], int(filename.split('-')[2].split('.')[0])
+            print(f"\nProcessing problem {problem_number} of type {problem_type}...")
             process_problem(problem_type, problem_number)
-        # except Exception as e:
-        #     print(f"Error processing problem {problem_number}: {e}")
-        #     continue
-
-    # compare solutions
-    for problem_number in range(N):
-        true = load_json(f'e-solutions/solution-{problem_type}-{problem_number:02d}.json')
-        pred = load_json(f'example-solutions/solution-{problem_type}-{problem_number:02d}.json')
-        # round all value
-
-        print(f"Problem {problem_number}: {true == pred}")
+        except Exception as e:
+            print(f"Error processing problem {problem_number} of type {problem_type}: {e}")
+            continue
 
 if __name__ == "__main__":
     main()
-
-# def main():
-#     # Define the type of problems
-#     problem_type = 'b'
-#     problem_number = 1
-#     # Process problems from 0 to 14
-#     # process_problem(problem_type, 11)
-#     # N = 15
-#     # for problem_number in range(N):
-#     #     print(f"\nProcessing problem {problem_number}...")
-#     #     process_problem(problem_type, problem_number)
-#     process_problem(problem_type, problem_number)
-
-#     # compare solutions
-#     # for problem_number in range(N):
-#     #     true = load_json(f'e-solutions/solution-{problem_type}-{problem_number:02d}.json')
-#     #     pred = load_json(f'example-solutions/solution-{problem_type}-{problem_number:02d}.json')
-#     #     print(f"Problem {problem_number}: {true == pred}")
-
-# if __name__ == "__main__":
-#     main()
