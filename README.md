@@ -141,19 +141,18 @@ def extract_data(data):
 Extracts specific information from the JSON object:
 - Extracts relevant sections (e.g., family-tree, test-results, queries, and country) from the parsed JSON file.
 - Returns a structured dictionary for easier access.
-- 
+
 These functions ensure that input data is processed systematically and robustly, even in the presence of errors.
 
 4) **Processing Problems**
-
 ```python
 def process_problem(problem_type, problem_number):
       # ...
 ```
 The process_problem function is the core of the script. It handles loading problem-specific data, constructing a Bayesian network based on genetic inheritance, performing inference, and saving the results in the required format.
 
-The function handles each problems in the following way:
-- **Load and Parse Data:** <br>
+**The function handles each problems in the following way:**
+1) **Load and Parse Data:** <br>
     The function constructs the file path based on the problem type and number (e.g., problem-A-01.json). It loads the data using load_json() and extracts relevant details with extract_data().
     ```python
     filename = f'example-problems/problem-{problem_type}-{problem_number:02d}.json'
@@ -168,15 +167,80 @@ The function handles each problems in the following way:
                }
      ```
 
-- **Determine CPD Based on Country:** <br>
+2) **Determine CPD Based on Country:** <br>
     Based on the "country" field, it selects the appropriate allele distribution CPD (cpd_north_wumponia or cpd_south_wumponia).
 
-- **Build Family Structure:** <br>
-The script dynamically constructs two dictionaries: <br>
-    - family_members: Tracks each family member's role, known blood type, and offspring.
-    - relations: Maps parents to their offspring for easier traversal. <br>
-    
-    It iterates over the family_tree field in the JSON file, updating roles (e.g., "father", "mother", "parent") and relationships.
+3) **Build Family Structure:**
+    1) Initializing Family Members: Each individual in the family_tree is dynamically represented as a dictionary with three attributes:
+        - **role** (father, mother, parent, offspring).
+        - **bloodtype** (e.g., A, B, AB, or O if known, otherwise None).
+        - **offspring** (list of children).
+        ```python
+        family_members[subject] = {"role": None, "bloodtype": None, "offspring": []}
+        ```
+        Leading to eventually constructing the dictionary of dictionaries "family_member" in such manner: 
+        ```python
+        family_members = {
+                "Kim": 
+                {
+                    "role": "parent",
+                    "bloodtype": None,
+                    "offspring": ["Ahmed"]
+                },
+                "Ahmed": 
+                {
+                    "role": "parent",
+                    "bloodtype": "B",
+                    "offspring": ["Calvin", "Linda"]
+                }
+            }
+        ```
+    2) Updating Relationships: For each relationship (father-of, mother-of, parent-of):
+        -  The role of the subject (e.g., father, mother, parent) is set.
+        -  The object (child) is added to the subject's offspring list.
+        -  The relationships are also maintained in a relations dictionary.
+        (e.g. For a family tree like:
+        ```python
+        [
+            {"relation": "mother-of", "subject": "Kim", "object": "Ahmed"},
+            {"relation": "father-of", "subject": "Ahmed", "object": "Calvin"},
+            {"relation": "father-of", "subject": "Ahmed", "object": "Linda"},
+            {"relation": "mother-of", "subject": "Lindsay", "object": "Dana"}
+        ]
+        ```
+        The resulting relations dictionary will look like this:
+        ```python
+        relations = {
+            "Kim": ["Ahmed"],
+            "Ahmed": ["Calvin", "Linda"],
+            "Lindsay": ["Dana"]
+        }
+        ```
 
-- **Assign Blood Types:** <br>
-  If test results are available, they are assigned to the corresponding individuals in family_members.
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
