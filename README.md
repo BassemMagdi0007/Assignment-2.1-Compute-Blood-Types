@@ -320,6 +320,15 @@ The process_problem function is the core of the script. It handles loading probl
           ```python
           overall_distribution = inference_complete.query(variables=[inference_variable], evidence=evidence)
           ```
+          
+## Self Evaluation and Design Decisions
+
+
+
+
+
+
+
 
 
 ## Output Format
