@@ -375,6 +375,18 @@ The same idea of v1 was applied but in this network every person has his own net
 - Scaling Issues with Complex Networks:
     - While the network produced correct results for all `problem-a-*` cases, its performance degraded as the problem complexity increased. The hardcoded dependencies and limited flexibility of the network design led to inaccuracies and incorrect inferences in more advanced scenarios.. 
 
+### [Network Final Structure]:
+In this Bayesian network structure, it consists of three types of nodes: 
+- Alleles
+- Genotypes
+- Bloodtypes.
+  
+<img width="533" alt="image" src="https://github.com/user-attachments/assets/713373d0-742b-47bd-b39e-81f5a1fcb70b" />
+
+Each individual is represented by two allele nodes `Member_Allele1` and `Member_Allele2` that combine to form their genotype node `Member_Genotype` via directed edges. The genotype node determines the blood type node `Member_Bloodtype` using predefined conditional probability distributions. Parent-child relationships are represented by directed edges from a parent's genotype node to the child's allele nodes `Parent_Genotype` → `Member_Allele1`. This structure reflects the inheritance of genetic traits, with the network explicitly encoding how alleles from parents combine and influence offspring's genotypes and blood types.
+
+
+
 ### Adressing cheap-bloodtype-test problems:
 
 ### Adressing no country specidfied problems:
