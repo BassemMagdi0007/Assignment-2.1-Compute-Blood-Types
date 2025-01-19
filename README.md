@@ -17,7 +17,7 @@ This repository contains a Python-based implementation of a Bayesian Network des
 ## Introduction
 This project implements a Bayesian Network-based system to infer blood types and calculate probabilities in a family tree using genetic inheritance rules. The provided code is designed to solve problems based on Bayesian networks by determining the probability distribution of blood types for individuals in a family tree. The task involves modeling the inheritance of blood types through alleles and using test results to refine these probabilities.
 
-The main objectives are:
+**The main objectives are:**
 
  - **Modeling:** Represent family relationships and blood type inheritance as a Bayesian network.
  - **Inference:** Use Bayesian reasoning to calculate the likelihood of each blood type for a queried individual.
@@ -109,18 +109,18 @@ OFFSPIRING_CPD = [
     ...
 ]
 ```
-The script defines CPDs and constants that represent genetic inheritance patterns and blood type probabilities:
+**The script defines CPDs and constants that represent genetic inheritance patterns and blood type probabilities:**
 
-- GENOTYPE_CPD: <br>
+- **GENOTYPE_CPD:** <br>
     -  Maps combinations of alleles (A, B, O) to genotypes (AA, AO, BB, etc.).
     -  Rows represent genotypes; columns correspond to all possible allele combinations.
-- OFFSPRING_CPD: <br>
+- **OFFSPRING_CPD:** <br>
     -  Represents the probabilistic inheritance from parents Genotypes to offspring alleels.
     -  Rows represent the ABO gene (A,B,O); columns correspond to genotypes.
-- SUM_6_4:  <br>
+- **SUM_6_4:**  <br>
     -  Maps genotypes to possible blood types (A, B, AB, O).
     -  Includes the relationship between genotype frequency and blood type probability, considering co-dominance (e.g., A results from AA and AO).
- - Countries CPDs: <br>
+ - **Countries CPDs:** <br>
      -  The allele distributions for two fictional regions ("North Wumponia" and "South Wumponia") are also defined as constants.
         ```python
         cpd_north_wumponia = [[0.5], [0.25], [0.25]]
@@ -138,7 +138,7 @@ Reads a JSON file from the specified path and parses its content. If the file is
 def extract_data(data):
       # ...
 ```
-Extracts specific information from the JSON object:
+**Extracts specific information from the JSON object:**
 - Extracts relevant sections (e.g., family-tree, test-results, queries, and country) from the parsed JSON file.
 - Returns a structured dictionary for easier access.
 
@@ -180,7 +180,8 @@ The process_problem function is the core of the script. It handles loading probl
         ```python
         family_members[subject] = {"role": None, "bloodtype": None, "offspring": []}
         ```
-        Leading to eventually constructing the dictionary of dictionaries `family_member` in such manner: 
+        Leading to eventually constructing the dictionary of dictionaries `family_member` in such manner:
+       
         ```python
         family_members = {
                 "Kim": 
@@ -197,8 +198,8 @@ The process_problem function is the core of the script. It handles loading probl
                 }
             }
         ```
-    2) **Updating Relationships:** <br>
-    For each relationship (father-of, mother-of, parent-of):
+    3) **Updating Relationships:** <br>
+    **For each relationship (father-of, mother-of, parent-of):**
         -  The role of the subject (e.g., father, mother, parent) is set.
         -  The object (child) is added to the subject's offspring list.
         -  The relationships are also maintained in a `relations` dictionary.
@@ -220,57 +221,59 @@ The process_problem function is the core of the script. It handles loading probl
         }
         ```
         This structure is later used to connect nodes in the Bayesian network and model inheritance patterns.
-   3) **Assigning Blood Types:** <br>
-   Known blood types from `test_results` are linked to the corresponding individuals in the `family_members` dictionary:
+       
+   5) **Assigning Blood Types:** <br>
+   **Known blood types from `test_results` are linked to the corresponding individuals in the `family_members` dictionary:**
         ```python
         for result in test_results:
             person = result.get("person")
             family_members[person]["bloodtype"] = result.get("result")
         ```
     
-    The preceding processes (i, ii, iii) will transform the data into a more structured and visually coherent format, which will enhance both data processing and debugging efficiency.
+       The preceding processes (i, ii, iii) will transform the data into a more structured and visually coherent format, which will enhance both data processing and debugging efficiency.
    
-   For instance, consider the example from `problem-a-00.json`:
-     ```python
-          "family-tree": [
-      {
-          "relation": "father-of",
-          "subject": "Ayansh",
-          "object": "Dana"
-      },
-      {
-          "relation": "mother-of",
-          "subject": "Lyn",
-          "object": "Dana"
-      }
-     "test-results": [
-      {
-          "type": "bloodtype-test",
-          "person": "Lyn",
-          "result": "A"
-      }
-      ```
-   The debugging outputs would be as follows:
-   
-    ```python
-    FATHER: Ayansh ( )
-    OFFSPRING: Dana ( )
-    MOTHER: Lyn (A)
-    ```
-
-    ```python
-    MEMBER:  Ayansh
-    INFO:  {'role': 'father', 'bloodtype': None, 'offspring': ['Dana']}
-    MEMBER:  Lyn
-    INFO:  {'role': 'mother', 'bloodtype': 'A', 'offspring': ['Dana']}
-     ```
-
-    ```python
-    member:  Dana
-    MOTHER:  ['Lyn']
-    FATHER:  ['Ayansh']
-    PARENT:  []
-     ```  
+      **For instance, consider the example from `problem-a-00.json`:** <br>
+      
+         ```python
+              "family-tree": [
+          {
+              "relation": "father-of",
+              "subject": "Ayansh",
+              "object": "Dana"
+          },
+          {
+              "relation": "mother-of",
+              "subject": "Lyn",
+              "object": "Dana"
+          }
+         "test-results": [
+          {
+              "type": "bloodtype-test",
+              "person": "Lyn",
+              "result": "A"
+          }
+         ```
+      **The debugging outputs would be as follows:** <br>
+      
+        ```python
+        FATHER: Ayansh ( )
+        OFFSPRING: Dana ( )
+        MOTHER: Lyn (A)
+        ```
+  
+        ```python
+        MEMBER:  Ayansh
+        INFO:  {'role': 'father', 'bloodtype': None, 'offspring': ['Dana']}
+        MEMBER:  Lyn
+        INFO:  {'role': 'mother', 'bloodtype': 'A', 'offspring': ['Dana']}
+        ```
+  
+        ```python
+        member:  Dana
+        MOTHER:  ['Lyn']
+        FATHER:  ['Ayansh']
+        PARENT:  []
+        ```  
   4) **Bayesian Network Construction:**
       - **Initializing Nodes: Each family member is represented in the Bayesian network by:**
           - Two nodes for alleles (Allele1, Allele2).
@@ -349,10 +352,10 @@ For example in `problem-a-00.json`: <br>
 
 #### Limitations:
 **While this approach worked for inferring the offspring’s blood type distribution, it presented several limitations:**
-- Restricted Query Capabilities:
+- **Restricted Query Capabilities:**
    - The network was designed to support queries only for the offspring’s genotype, as this node had a variable cardinality of 4 (representing the blood types A, B, O, AB).
    - Parental nodes could not support similar queries due to the lack of structure to infer their genotypes or alleles.
-- Challenges with Parent Queries: 
+- **Challenges with Parent Queries:** 
    - To query a parent's genotype, that parent node would need to be redefined as the Genotype node. This required:
       - Adjusting the edges, as the Father's Genotype and Mother's Genotype are independent.
       - Adding a new node to incorporate either the offspring’s blood type (if available) or external country-specific CPD data.
