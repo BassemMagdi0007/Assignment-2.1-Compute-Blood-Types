@@ -350,7 +350,7 @@ For example in `problem-a-00.json`: <br>
 
 - **Father's Allele (Allele1):** Since the father’s blood type was not provided, the Allele1 node was assigned the CPD specific to North Wumponia (cpd_north_wumponia).
 
-#### Limitations:
+#### **Limitations:**
 **While this approach worked for inferring the offspring’s blood type distribution, it presented several limitations:**
 - **Restricted Query Capabilities:**
    - The network was designed to support queries only for the offspring’s genotype, as this node had a variable cardinality of 4 (representing the blood types A, B, O, AB).
@@ -372,10 +372,10 @@ The same idea of v1 was applied but in this network every person has his own net
 
 <img width="527" alt="image" src="https://github.com/user-attachments/assets/96fb0e49-d3b7-4bb9-9c17-894dc3030dfa" />
 
-#### Limitations:
-- Dependency on Offspring Blood Type:
+#### **Limitations:**
+- **Dependency on Offspring Blood Type:**
     - A parent is dependent to the offspring bloodtype, so to establish this connection the offspring’s blood type CPD was assigned in a hardcoded way to the parent’s allele node. This approach lacked generality and introduced rigid dependencies that could not easily adapt to more complex scenarios.
-- Scaling Issues with Complex Networks:
+- **Scaling Issues with Complex Networks:**
     - While the network produced correct results for all `problem-a-*` cases, its performance degraded as the problem complexity increased. The hardcoded dependencies and limited flexibility of the network design led to inaccuracies and incorrect inferences in more advanced scenarios.. 
 
 ### [Network Final Structure]:
