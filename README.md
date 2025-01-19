@@ -385,16 +385,62 @@ In this Bayesian network structure, it consists of three types of nodes:
 
 Each individual is represented by two allele nodes `Member_Allele1` and `Member_Allele2` that combine to form their genotype node `Member_Genotype` via directed edges. The genotype node determines the blood type node `Member_Bloodtype` using predefined conditional probability distributions. Parent-child relationships are represented by directed edges from a parent's genotype node to the child's allele nodes `Parent_Genotype` → `Member_Allele1`. This structure reflects the inheritance of genetic traits, with the network explicitly encoding how alleles from parents combine and influence offspring's genotypes and blood types.
 
-
-
 ### Adressing cheap-bloodtype-test problems:
+The cheap-blood-test problems introduce a 20% probability of incorrect test results, which complicated the inference process. <br>
+Two approaches were attempted: <br>
+- **Approach 1: Applying the 20% Error to Test Results:**
+  ```python
+  if result.get("type") == "cheap-bloodtype-test":
+      if random.random() < 0.2:  # 20% error
+          other_person = random.choice([p for p in family_members.keys() if p != person])
+          family_members[person]["bloodtype"] = family_members[other_person]["bloodtype"]
+      else:
+          family_members[person]["bloodtype"] = result.get("result")
+  ```
+    This approach did not yield the correct results. The error propagation seemed to disrupt the network’s inference, as introducing random incorrect blood types caused inconsistencies in the CPD values.
+
+- **Approach 2: Applying the 20% Error to Final Results:** <br>
+After running the Bayesian network normally and obtaining the results, a 20% error was applied to the computed distributions for queried individuals. A 20% chance was introduced to randomly adjust these probabilities. <br>
+This approach was also incorrect. Modifying the results post-inference failed to reflect the dependencies and relationships inherent in the Bayesian network.
+
+**Conclusion for Cheap-Blood-Test Problems:** <br>
+Despite multiple attempts, I was unable to implement an accurate solution that accounted for the 20% error in test results while preserving the integrity of the Bayesian network.
 
 ### Adressing no country specidfied problems:
+For problems without a specified country, the CPD for alleles is undefined, and each country (North Wumponia and South Wumponia) must be considered equally likely.  <br>
+Several methods were explored: <br>
 
+- **Approach 1: Randomly Choosing a Country:** <br>
+For each problem, a single country (North or South Wumponia) was selected randomly with a 50% probability, and the Bayesian network was solved using that country’s CPD.
+  ```python
+  cpd_unspecified_country = random.choice([cpd_north_wumponia, cpd_south_wumponia])
+  ```
+  This method yielded inconsistent results, as the random selection led to significant variations and incorrect answers.
 
+- **Approach 2: Averaging Results from Both Countries:** <br>
+The network was run twice for each problem—once with North Wumponia’s CPD and once with South Wumponia’s CPD. The results were averaged to account for the equal likelihood of each country.
+  ```python
+  north_results = run_network(cpd_north_wumponia)
+  south_results = run_network(cpd_south_wumponia)
+  cpd_unspecified_country = (north_results + south_results) / 2
+  ```
+  The results were still incorrect. Averaging results seemed to oversimplify the relationships between alleles and blood types.
+
+- **Approach 3: Combining CPDs:**
+The allele distributions from both countries were combined and averaged to create a new CPD for unspecified countries:
+  ```python
+  cpd_unspecified_country = [[(0.5 * north + 0.5 * south) for north, south in zip(north_row, south_row)] 
+                             for north_row, south_row in zip(cpd_north_wumponia, cpd_south_wumponia)]
+  ```
+  This approach produced results close to the correct answers to some problems like `problem-e-00.json` but was not entirely accurate:
+  ```python
+    Current Answer: {'O': 0.275, 'A': 0.325, 'B': 0.4, 'AB': 0.0})
+    Correct Answer: {'O': 0.2795, 'A': 0.2934, 'B': 0.4270, 'AB': 0.0},
+  ```
+  Although the combined CPD approach came close to the correct results, it did not fully capture the nuances of the problem. As a result, the exact solution for this problem type remains unresolved.
 
 ## Output Format
-The computed probabilities are formatted into a dictionary for each query and stored in a list:
+The computed probabilities are formatted into a dictionary for each query and stored in a list: 
 ```python
 result = {
     "type": "bloodtype",
@@ -407,7 +453,7 @@ The results are saved to a JSON file in the p-solutions/ directory:
 with open(output_filename, 'w') as outfile:
     json.dump(results, outfile, indent=4)
 ```
-As stated before the output in the files will be in the format: 
+The final format of the output in the files: 
 ```python
 [
     {
