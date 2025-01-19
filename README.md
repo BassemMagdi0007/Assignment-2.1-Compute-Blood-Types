@@ -322,14 +322,35 @@ The process_problem function is the core of the script. It handles loading probl
           ```
 
 
+## Output Format
+The computed probabilities are formatted into a dictionary for each query and stored in a list:
+```python
+result = {
+    "type": "bloodtype",
+    "person": person,
+    "distribution": { "O": ..., "A": ..., "B": ..., "AB": ... }
+}
+```
+The results are saved to a JSON file in the p-solutions/ directory:
+```python
+with open(output_filename, 'w') as outfile:
+    json.dump(results, outfile, indent=4)
+```
+As stated before the output in the files will be in the format: 
+```python
+[
+    {
+        "type": "bloodtype",
+        "person": "Rory",
+        "distribution": {
+            "O": 0.25,
+            "A": 0.5,
+            "B": 0.25,
+            "AB": 0.0
+        }
+    }
+]
 
-
-
-
-
-
-
-
-
+```
 
   
