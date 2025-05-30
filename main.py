@@ -2,9 +2,10 @@ import json
 import logging
 import os
 import random
-from pgmpy.models import BayesianNetwork
+from pgmpy.models import DiscreteBayesianNetwork
 from pgmpy.factors.discrete import TabularCPD
 from pgmpy.inference import VariableElimination
+import glob
 
 '''------------------------------------------------------------------------------------------------'''
 # Suppress pgmpy warnings
@@ -68,6 +69,7 @@ def process_problem(problem_type, problem_number):
     # Conditional Probability Distributions (CPDs) for the alleles and genotypes
     cpd_north_wumponia = [[0.5], [0.25], [0.25]]
     cpd_south_wumponia = [[0.15], [0.55], [0.30]]
+    # TODO: WORNG
     cpd_unspecified_country = [[0.325], [0.4], [0.275]]
 
     '''--------------------------------------------------------------------------------------------'''
@@ -90,12 +92,19 @@ def process_problem(problem_type, problem_number):
     country = extracted_data["country"]
 
     # Define country_cpd based on the country
+    use_country_node = False
     if country == "North Wumponia":
         country_cpd = cpd_north_wumponia
     elif country == "South Wumponia":
         country_cpd = cpd_south_wumponia
     elif country is None:
-        country_cpd = cpd_unspecified_country
+        use_country_node = True
+        # 3x2 CPD for alleles: rows are A, B, O; columns are North, South
+        founder_allele_cpd = [
+            [0.5, 0.15],   # A
+            [0.25, 0.55],  # B
+            [0.25, 0.30],  # O
+        ]
     else:
         print(f"Skipping problem {problem_number} due to invalid or missing country: {country}")
         return
@@ -194,7 +203,12 @@ def process_problem(problem_type, problem_number):
     '''--------------------------------------------------------------------------------------------'''
     ''''PRINTS FOR DEBUGGING'''
     # Define the Bayesian Network structure
-    complete_model = BayesianNetwork()  
+    complete_model = DiscreteBayesianNetwork()  
+    if use_country_node:
+        # Add Country node and CPD
+        complete_model.add_node("Country")
+        cpd_country = TabularCPD(variable="Country", variable_card=2, values=[[0.5], [0.5]])
+        complete_model.add_cpds(cpd_country)
 
     # Print the family structure for debugging
     for member, info in family_members.items():
@@ -226,55 +240,37 @@ def process_problem(problem_type, problem_number):
         allele2 = f"{member}_Allele2"
 
         if member not in offsprings:
-            cpd_allele1 = TabularCPD(variable=allele1, variable_card=3, values=country_cpd)
-            cpd_allele2 = TabularCPD(variable=allele2, variable_card=3, values=country_cpd)
+            # Founder: no parents
+            if use_country_node:
+                cpd_allele1 = TabularCPD(variable=allele1, variable_card=3, evidence=["Country"], evidence_card=[2], values=founder_allele_cpd)
+                cpd_allele2 = TabularCPD(variable=allele2, variable_card=3, evidence=["Country"], evidence_card=[2], values=founder_allele_cpd)
+                complete_model.add_edge("Country", allele1)
+                complete_model.add_edge("Country", allele2)
+            else:
+                cpd_allele1 = TabularCPD(variable=allele1, variable_card=3, values=country_cpd)
+                cpd_allele2 = TabularCPD(variable=allele2, variable_card=3, values=country_cpd)
         else:
-            print("\nmember: ", member)
-            # Find the mother of the current member
-            # Iterate over all family members and check if the current member is listed as an offspring
-            # and if the role of the family member is "mother" or "father"
-            mother = [m for m in family_members.keys() if
-                      member in family_members[m]["offspring"] and family_members[m]["role"] == "mother"]
-            print("MOTHER: ", mother)
-            # Find the father of the current member
-            # Iterate over all family members and check if the current member is listed as an offspring
-            # and if the role of the family member is "father" or "parent"
-            father = [f for f in family_members.keys() if
-                      member in family_members[f]["offspring"] and family_members[f]["role"] == "father"]  
-            print("FATHER: ", father)      
-            # Find the parent of the current member
-            # Iterate over all family members and check if the current member is listed as an offspring
-            # and if the role of the family member is "parent"    
-            parent = [p for p in family_members.keys() if
-                      member in family_members[p]["offspring"] and family_members[p]["role"] == "parent"]
-            print("PARENT: ", parent)
-            ''' OUTPUT
-                member:  Ahmed
-                MOTHER:  []
-                FATHER:  []
-                PARENT:  ['Kim']
-            '''
-                        
+            mother = [m for m in family_members.keys() if member in family_members[m]["offspring"] and family_members[m]["role"] == "mother"]
+            father = [f for f in family_members.keys() if member in family_members[f]["offspring"] and family_members[f]["role"] == "father"]  
+            parent = [p for p in family_members.keys() if member in family_members[p]["offspring"] and family_members[p]["role"] == "parent"]
             # FATHER
             if father:
-                cpd_allele1 = TabularCPD(variable=allele1, variable_card=3, evidence=[f"{father[0]}_Genotype"],
-                                         evidence_card=[6], values=OFFSPIRING_CPD)
+                cpd_allele1 = TabularCPD(variable=allele1, variable_card=3, evidence=[f"{father[0]}_Genotype"], evidence_card=[6], values=OFFSPIRING_CPD)
+            elif parent:
+                cpd_allele1 = TabularCPD(variable=allele1, variable_card=3, evidence=[f"{parent[0]}_Genotype"], evidence_card=[6], values=OFFSPIRING_CPD)
+            elif use_country_node:
+                cpd_allele1 = TabularCPD(variable=allele1, variable_card=3, evidence=["Country"], evidence_card=[2], values=founder_allele_cpd)
+                complete_model.add_edge("Country", allele1)
             else:
                 cpd_allele1 = TabularCPD(variable=allele1, variable_card=3, values=country_cpd)
             # MOTHER
             if mother:
-                cpd_allele2 = TabularCPD(variable=allele2, variable_card=3, evidence=[f"{mother[0]}_Genotype"],
-                                         evidence_card=[6], values=OFFSPIRING_CPD)
+                cpd_allele2 = TabularCPD(variable=allele2, variable_card=3, evidence=[f"{mother[0]}_Genotype"], evidence_card=[6], values=OFFSPIRING_CPD)
+            elif use_country_node:
+                cpd_allele2 = TabularCPD(variable=allele2, variable_card=3, evidence=["Country"], evidence_card=[2], values=founder_allele_cpd)
+                complete_model.add_edge("Country", allele2)
             else:
                 cpd_allele2 = TabularCPD(variable=allele2, variable_card=3, values=country_cpd)
-            # PARENT
-            if not father and not mother:
-                if parent:
-                    cpd_allele1 = TabularCPD(variable=allele1, variable_card=3, evidence=[f"{parent[0]}_Genotype"],
-                                            evidence_card=[6], values=OFFSPIRING_CPD)
-                else:
-                    cpd_allele1 = TabularCPD(variable=allele1, variable_card=3, values=country_cpd)
-                
 
         complete_model.add_cpds(cpd_allele1, cpd_allele2)
         complete_model.add_edges_from([
@@ -362,14 +358,13 @@ def process_problem(problem_type, problem_number):
     with open(output_filename, 'w') as outfile:
         json.dump(results, outfile, indent=4)
 
-import glob
-
 def main():
     # Ensure the p-solutions directory exists
     os.makedirs(os.path.join(os.getcwd(), 'p-solutions'), exist_ok=True)
 
-    # Get all problem files in the problems folder
-    problem_files = glob.glob(os.path.join(os.getcwd(), 'problems', '*.json'))
+    # Set your desired pattern here (e.g., 'problem-a-*.json')
+    pattern = 'problem-e-*.json'
+    problem_files = glob.glob(os.path.join(os.getcwd(), 'problems', pattern))
 
     for problem_file in problem_files:
         try:
@@ -384,3 +379,27 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+
+"""RUN ALL"""
+# def main():
+#     # Ensure the p-solutions directory exists
+#     os.makedirs(os.path.join(os.getcwd(), 'p-solutions'), exist_ok=True)
+
+#     # Get all problem files in the problems folder
+#     problem_files = glob.glob(os.path.join(os.getcwd(), 'problems', '*.json'))
+
+#     for problem_file in problem_files:
+#         try:
+#             # Extract problem type and number from the filename
+#             filename = os.path.basename(problem_file)
+#             problem_type, problem_number = filename.split('-')[1], int(filename.split('-')[2].split('.')[0])
+#             print(f"\nProcessing problem {problem_number} of type {problem_type}...")
+#             process_problem(problem_type, problem_number)
+#         except Exception as e:
+#             print(f"Error processing problem {problem_number} of type {problem_type}: {e}")
+#             continue
+
+# if __name__ == "__main__":
+#     main()
