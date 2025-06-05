@@ -1,4 +1,4 @@
-# Assignment-2.1-Compute-Blood-Types
+# Compute-Blood-Types
 
 This repository contains a Python-based implementation of a Bayesian Network designed to predict blood types and solve familial relationship-based queries using probabilistic inference. The program leverages the pgmpy library for Bayesian Network construction and variable elimination.
 
